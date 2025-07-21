@@ -1,0 +1,215 @@
+###########################
+#--||------------------||--#
+#--/\--Drominito-------/\--#
+#/....\--------------/....\#
+############################
+
+#Table of Contents
+#############################
+#...........................#
+#....(One)....Variables.....#
+#....(Two)....Resolution....#
+#....(Three)..Keyboard......#
+#...........................#
+#############################
+#...........................#
+#.....(Four)....Progs.......#
+#.....(Five)....W-Design....#
+#.....(Six).....W-Navi......#
+#.....(Seven)...Sound.......#
+#.....(Eight)...Tags........#
+#.....(Nine)....Comments....#
+#.....(Ten).....Laptop......#
+#.....(Eleven)..Others......#
+#...........................#
+#############################
+
+# Varaiblesk1
+bg="swww img ~/mm/mimg/bg/P-MOOTB.png"
+bar="~/.cargo/bin/i3bar-river -c ~/.config/i3bar-river/config.toml"
+tile="rivertile -view-padding 0 -outer-padding 0 &"
+shoft="grim - | wl-copy && ffplay -nodisp ~/mm/sounds/samples/mp3/correct.mp3"
+str="kitty tmux && bash""
+
+
+# Resolutionk2
+# --transform 90"
+riverctl spawn "wlr-randr --output HDMI-A-1 --mode 1920x1080@60.00000"
+riverctl map normal Alt V spawn "wlr-randr --output HDMI-A-1 --transform normal --mode 3440x1440@99.982002 --scale 1.75"
+
+# Keyboardk3
+riverctl set-repeat 50 300
+riverctl keyboard-layout de
+set $layout de
+
+
+#----------------------------------------------------------------------#
+#-----------------------------Progsk4----------------------------------#
+#----------------------------------------------------------------------#
+riverctl spawn swww-daemon
+riverctl spawn "$bg"
+riverctl spawn "$bar"
+riverctl spawn "$str"
+
+#wlsunset -l 47.9 -L 8.9 &
+#sudo wluma
+
+# 1001 is the UID of dromi. So it shows,
+# if i even have the programm open.
+ 
+# if [ -S "/tmp/tmux-1001/default" ]
+#         riverctl spawn "$str --hold tmux attach"
+# else
+#         riverctl spawn "$str --hold tmux"
+riverctl map normal Alt X spawn "firefox &"
+riverctl map normal Super T spawn kitty
+riverctl map normal Alt M spawn "rofi -show drun"
+riverctl map normal Alt L spawn "rofi -show p -modi p:rofi-power-menu"
+riverctl map normal Super S spawn "$shot"
+
+riverctl map normal Alt 0 spawn "riverctl output-layout rivertile"
+
+
+
+#-$------------------------------------------------------------------$-#
+#-$---------------------------Progs----------------------------------$-#
+#-$------------------------------------------------------------------$-#
+
+
+
+# Window Design
+# Window Navigation
+#----------------------------------------------------------------------#
+#-----------------------Widdow-Stuffk5---------------------------------#
+# &----------------------------------------------------------------------#
+riverctl output-layout rivertile
+rivertile -view-padding 0 -outer-padding 0 &
+
+riverctl map normal Super I spawn "river-shifttags --shifts -1"
+riverctl map normal Super O spawn "river-shifttags --shifts +1"
+#riverctl map normal Super I spawn "flow cycle-tags previous 1"
+#riverctl map normal Super O spawn "flow cycle-tags next 1"
+riverctl map normal Super Space toggle-float
+
+riverctl background-color 0x002b36
+riverctl border-color-focused 0x93a1a1
+riverctl border-color-unfocused 0x586e75
+
+riverctl map-pointer normal Super BTN_MIDDLE toggle-float
+
+riverctl map normal Super H send-layout-cmd rivertile "main-ratio -0.05"
+riverctl map normal Super L send-layout-cmd rivertile "main-ratio +0.05"
+riverctl map normal Super+Shift K send-layout-cmd rivertile "main-location top"
+riverctl map normal Super+Shift L send-layout-cmd rivertile "main-location right"
+riverctl map normal Super+Shift J send-layout-cmd rivertile "main-location bottom"
+riverctl map normal Super+Shift H send-layout-cmd rivertile "main-location left"
+
+riverctl map normal Super+Alt+Control H snap left
+riverctl map normal Super+Alt+Control J snap down
+riverctl map normal Super+Alt+Control K snap up
+riverctl map normal Super+Alt+Control L snap right
+
+riverctl map normal Super Super P enter-mode passthrough
+riverctl map normal Super Return zoom
+riverctl map normal Super F toggle-fullscreen
+
+riverctl map normal Super J focus-view next
+riverctl map normal Super K focus-view previous
+
+riverctl map normal Super+Shift E exit
+riverctl map normal Super Q close
+
+
+#-$------------------------------------------------------------------$-#
+#-$----------------------Window-Stuff--------------------------------$-#
+#-$------------------------------------------------------------------$-#
+
+
+
+
+
+
+#----------------------------------------------------------------------#
+#-----------------------------Soundk7----------------------------------#
+#----------------------------------------------------------------------#
+riverctl map normal Mod4+F12 spawn pulsemixer --change-volume +10
+#-$------------------------------------------------------------------$-#
+#-$---------------------------Sound----------------------------------$-#
+#-$------------------------------------------------------------------$-#
+
+
+
+
+
+
+#----------------------------------------------------------------------#
+#-----------------------------tagsk8-----------------------------------#
+#----------------------------------------------------------------------#
+currentTag=0
+
+
+for i in $(seq 1 9)
+do
+    tags=$((1 << ($i - 1)))
+    riverctl map normal Super $i set-focused-tags $tags
+    riverctl map normal Super+Shift $i set-view-tags $tags
+    riverctl map normal Super+Control $i toggle-focused-tags $tags
+    riverctl map normal Super+Shift+Control $i toggle-view-tags $tags
+done
+
+all_tags=$(((1 << 32) - 1))
+riverctl map normal Super 0 set-focused-tags $all_tags
+riverctl map normal Super+Shift 0 set-view-tags $all_tags
+#-$--------------------------------------------------------------------$-#
+#-$---------------------------tags-------------------------------------$-#
+#-$--------------------------------------------------------------------$-#
+
+
+
+
+
+
+#----------------------------------------------------------------------#
+#-----------------------commmentsk9------------------------------------#
+#----------------------------------------------------------------------#
+#riverctl spawn "$str && tmux set -g status-style g=blue bg=default"
+#riverctl map normal Alt 0 output-layout rivertile; "swww kill & swww init" 
+#riverctl map normal Super I enter-mode tilted
+#riverctl declare-mode tilted
+# Super+{Up,Right,Down,Left} to change layout orientation
+#waybar &
+#polybar &  
+#riverctl map normal Super+Shift A spawn "grim -g $(slurp) | wl-copy && ffplay -nodisp ~/mm/sound/samples/mp3/correct.mp3"
+#-$--------------------------------------------------------------------$-#
+#-$----------------------commments-------------------------------------$-#
+#-$--------------------------------------------------------------------$-#
+
+
+
+
+
+
+#----------------------------------------------------------------------#
+#-------------------------laptopk10-------------------------------------#
+#----------------------------------------------------------------------#
+#riverctl input pointer-2-7-SynPS/2_Synaptics_TouchPad tap enabled
+#-$--------------------------------------------------------------------$-#
+#-$-----------------------laptop---------------------------------------$-#
+#-$--------------------------------------------------------------------$-#
+
+
+
+
+
+
+#-$--------------------------------------------------------------------$-#
+#-$-----------------------otherk11-------------------------------------$-#
+#-$--------------------------------------------------------------------$-#
+# Super + Left Mouse Button to move views
+#riverctl map-pointer normal Super BTN_RIGHT resize-view
+#riverctl spawn nm-applet
+#riverctl spawn volumeicon
+
+
+
+

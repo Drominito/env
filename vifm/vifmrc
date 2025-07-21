@@ -1,0 +1,4 @@
+fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm
+         \ /home/dromi/.config/vifm/scripts/imgt %px %py %pw %ph %c
+         \ %pc
+         \ /home/dromi/.config/vifm/scripts/imgc %px %py %pw %ph

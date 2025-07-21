@@ -1,0 +1,17 @@
+view!
+"fileviewer {*.[1-8]},<text/troff> man ./%c | col -b
+"fileviewer */ ls --color=always
+"fileviewer .*/ ls --color=always
+
+
+set suggestoptions=normal,visual,view,otherpane,keys,marks,registers
+
+" Für Vorschau im Split-Pane (mit 'zo'):
+
+"filetype *.jpg,*.jpeg,*.png,*.gif,*.bmp,*.webp \ echo "Breite: %c, Pfad: %f, Höhe: %h"
+"fileviewer *.jpg,*.jpeg,*.png,*.gif,*.bmp,*.webp \ echo "Breite: %c, Pfad: %f, Höhe: %h"
+
+fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm
+         \ imgt %px %py %pw %ph %c
+
+source ~/.config/vifm/colors/Default.vifm
