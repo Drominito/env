@@ -16,9 +16,11 @@ c=dotfiles
 
 # didn't knew that wild-cards ignore dotfiles by standard...
 # cp -fr ~/repo/dotfiles/home/*   ~/
-cp -fr ~/repo/dotfiles/home/.bashrc     ~/
-cp -fr ~/repo/dotfiles/home/.tmux.conf  ~/
-cp -fr ~/repo/dotfiles/home/.vimrc      ~/
+
+p=$(pwd)
+cp -fr $p/home/.bashrc     ~/
+cp -fr $p/home/.tmux.conf  ~/
+cp -fr $p/home/.vimrc      ~/
 
 
 # Crap, but it should at leat work don't want spend much time on toolchains.
@@ -29,9 +31,9 @@ mkdir -p ~/.config/river/
 mkdir -p ~/.config/vifm/
 
 
-cp -fr ~/repo/dotfiles/config/i3bar-river/*   ~/.config/i3bar-river/
-cp -fr ~/repo/dotfiles/config/i3status-rust/* ~/.config/i3status-rust/
-cp -fr ~/repo/dotfiles/config/kitty/*         ~/.config/kitty/
-cp -fr ~/repo/dotfiles/config/river/*         ~/.config/river/
-cp -fr ~/repo/dotfiles/config/vifm/*          ~/.config/vifm/
+cp -fr $p/config/i3bar-river/*   ~/.config/i3bar-river/
+cp -fr $p/config/i3status-rust/* ~/.config/i3status-rust/
+cp -fr $p/config/kitty/*         ~/.config/kitty/
+cp -fr $p/config/river/*         ~/.config/river/
+cp -fr $p/config/vifm/*          ~/.config/vifm/
 
