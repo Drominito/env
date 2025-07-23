@@ -1,0 +1,37 @@
+#!/bin/bash
+
+
+#c=$(pwd | cut -d / -f5)
+c=dotfiles
+# maybe should just i cp it? - i think it's simpler
+
+#ln -sf ~/repo/$c/i3bar-river   ~/.config/i3bar-river
+#ln -sf ~/repo/$c/i3status-rust ~/.config/i3status-rust
+#ln -sf ~/repo/$c/kitty         ~/.config/kitty
+#ln -sf ~/repo/$c/river         ~/.config/river
+#ln -sf ~/repo/$c/vifm          ~/.config/vifm
+
+#ln -sf ~/repo/$c/.bashrc       ~/.bashrc
+#ln -sf ~/repo/$c/.tmux.conf    ~/.tmux.conf
+
+# didn't knew that wild-cards ignore dotfiles by standard...
+# cp -fr ~/repo/dotfiles/home/*   ~/
+cp -fr ~/repo/dotfiles/home/.bashrc     ~/
+cp -fr ~/repo/dotfiles/home/.tmux.conf  ~/
+cp -fr ~/repo/dotfiles/home/.vimrc      ~/
+
+
+# Crap, but it should at leat work don't want spend much time on toolchains.
+mkdir -p ~/.config/i3bar-river/
+mkdir -p ~/.config/i3status-rust/
+mkdir -p ~/.config/kitty/
+mkdir -p ~/.config/river/
+mkdir -p ~/.config/vifm/
+
+
+cp -fr ~/repo/dotfiles/config/i3bar-river/*   ~/.config/i3bar-river/
+cp -fr ~/repo/dotfiles/config/i3status-rust/* ~/.config/i3status-rust/
+cp -fr ~/repo/dotfiles/config/kitty/*         ~/.config/kitty/
+cp -fr ~/repo/dotfiles/config/river/*         ~/.config/river/
+cp -fr ~/repo/dotfiles/config/vifm/*          ~/.config/vifm/
+

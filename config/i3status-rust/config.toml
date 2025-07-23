@@ -48,9 +48,11 @@ block = "sound"
 
 
 
-[[block]]
-block = "battery"
-format = " $percentage {$time_remaining.dur(hms:true, min_unit:m) |}"
+# Enable it, if you device have a battery
+# later it should detect automatically, if it owns one.
+#[[block]]
+#block = "battery"
+#format = " $percentage {$time_remaining.dur(hms:true, min_unit:m) |}"
 
 
 [[block]]
