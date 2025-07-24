@@ -2,7 +2,7 @@
 
 
 #c=$(pwd | cut -d / -f5)
-c=dotfiles
+c=env/dotfiles
 # maybe should just i cp it? - i think it's simpler
 
 #ln -sf ~/repo/$c/i3bar-river   ~/.config/i3bar-river

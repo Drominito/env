@@ -1,0 +1,175 @@
+#!/bin/bash
+fi="INSTALL-INFO:"
+pfo="-S --needed" # pacman-flag-option
+
+# OPTIONS
+# -sys
+# -deps
+# -ex
+#
+# fX -> flatpak
+# X(m/o) -> main/others
+# pX -> pacman
+# fX -> flatpak
+#
+# -aur
+# -nerd
+#
+#
+if [[ "$*" == *"-h"* ]]; then
+
+	 echo "OPTIONS"
+	 echo "-------"
+	 echo "-sys"
+	 echo "-deps"
+	 echo "-ex"
+	 echo	
+	 echo "X(m/o) -> main/others"
+	 echo
+	 echo "pX -> pacman"
+	 echo "fX -> flatpak"
+	 echo
+	 echo "-aur"
+	 echo "-nerd"
+	 echo
+	 echo "-a"
+	 echo "-all (same as -nerd)"
+	 echo
+fi
+
+
+
+
+if [[ "$*" == *"-sys"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-sys) Installing System Prog's"
+	sudo pacman $pfo wireplumber iwd networkmanager pipewire pipewire-alsa pipewire-pulse pipewire-audio alsa-tools alsa-utils alsa-firmware
+fi
+
+
+# Required uncommented section about [multilib] in /etc/pacman.conf
+if [[ "$*" == *"-deps"* || "$*" == *"-a"* ]]; then
+	echo "$fi Installing Libs"
+	sudo pacman  $pfo gcc clang cargo rustup go wayland wl-clipboard wlr-randr base-devel debugedit fakeroot
+	echo "$fi Installing Drivers"
+	sudo pacman $pfo xf86-video-intel mesa lib32-mesa vulkan-intel lib32-vulkan-intel # For Intergrated Intel GPU's
+	# FOSS-Drivers (For experimental Purposes)
+	#sudo pacman $pfo  vulkan-nouveau lib32-vulkan-nouveau xf86-video-nouveau
+	# sudo pacman $pfo lib32-nvidia-utils nvidia-utils # For newer GPU's
+	yay $pfo lib32-nvidia-470xx-utils 
+	#nvidia-470xx-utils nvidia-470xx-dkms # Install these manually
+	#sudo pacman $pfo opencl-nvidia-470xx # Propably already in some of these packages included
+
+
+fi
+
+
+if [[ "$*" == *"-ex"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-ex) Installing exernal's"
+	rustup default stable
+	cargo install --list | rg -q "i3bar-river"
+	if [[ $? == 0 ]]; then
+		echo "i3bar-river already exists"		
+	fi
+	cargo install --locked i3bar-river
+
+	#+river-shifttags 
+	cargo install --list | rg -q "river-shifttags"
+	if [[ $? == 0 ]]; then
+		echo "river-shifttags already exists"		
+	fi
+
+	echo "Installing river-shifttags manually"
+	trgt="$HOME/repo/river-shifttags/"
+	mkdir -p $trgt
+	git clone https://gitlab.com/akumar-xyz/river-shifttags.git $trgt
+	printf "Switching to $s\n" "$trgt"
+	(cd "$trgt" && make && sudo make install)
+
+	#-river-shifttags 
+	
+
+fi
+
+
+
+# pacman
+if [[ "$*" == *"-pm"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-pm) Installing main pacman's"
+	sudo pacman  $pfo less bat vim vifm tmux man reptyr fd bash kitty river swww rofi i3status-rust firefox 
+fi
+
+if [[ "$*" == *"-po"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-po) Installing other pacman's"
+	sudo pacman $pfo zathura scrcpy ffmpeg w3m docker mako wayvnc waylock wireshark-cli openssh rsync rclone ncdu ncurses bluetui ninja cmake ccache octave ufw fail2ban fastfetch  playerctl mpv vlc cmus grim slurp ripgrep tealdeer speedtest-cli viu chafa btop sdl2 sdl3 python-pip python-pip net-tools avahi
+#pam
+fi
+
+
+
+# flatpak
+if [[ "$*" == *"-fm"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-fm)  Installing main flatpak's"
+	 flatpak install flathub md.obsidian.Obsidian
+	 flatpak install flathub org.audacityteam.Audacity
+	 flatpak install flathub com.saivert.pwvucontrol
+fi
+
+
+if [[ "$*" == *"-fo"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-fo)  Installing other flatpak's"
+	 flatpak install flathub com.ktechpit.whatsie
+	 flatpak install flathub com.github.maoschanz.drawing
+	 flatpak install flathub org.pencil2d.Pencil2D
+	 flatpak install flathub org.chromium.Chromium
+	 flatpak install flathub org.godotengine.Godot
+	 flatpak install flathub org.kde.krita
+	 flatpak install flathub org.gimp.GIMP
+fi
+
+
+
+if [[ "$*" == *"-aur"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-aur) -Installing AUR packages"
+	yay $pfo mosh mosh-agent bluealsa rofi-emoji-git brave-git latex-mk
+fi
+
+
+
+
+if [[ "$*" == *"-games"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-nerd) Installing Games(Steam, Flathub, .."
+	flatpak install flathub com.valvesoftware.Steam
+fi
+
+if [[ "$*" == *"-nerd"* || "$*" == *"-all"* ]]; then
+	echo "$fi (-nerd) Installing ALL Nerd-Fonts(HEAVY ~10GB)"
+	#sudo pacman $pfo $(pacman -S nerd-fonts | cut -d/ -f2 | cut -d' ' -f1)
+	sudo pacman $pfo otf-firamono-nerd ttf-firacode-nerd
+	
+fi
+
+if [[ "$*" == *"-o"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-o) Installing Other stuff"
+	sudo pacman  $pfo ttf-ms-win11-auto lf ueberzugpp imagemagick  ffmpegthumbnailer
+	yay $pfo drm_info powerstat-git powerstat-git dracut mokutil polymc  poppler fontpreview
+	#https://github.com/thimc/vifmimg?tab=readme-ov-file
+	#yay $pfo steam-devices-git
+	
+fi
+
+
+
+# Later 
+## Syntax: flatpak install -y flathub org.kde.krita ...
+
+## ..'s -> ..s
+
+## 4. Eleganter: case statt if [[ "$*" == *"-x"* ]]
+## Du könntest über ein Rework mit for arg in "$@"; do case $arg in ...) nachdenken – ist aber Geschmackssache. 
+
+
+## GREEN="\033[0;32m"
+## RESET="\033[0m"
+## fi="${GREEN}INSTALL-INFO:${RESET}"
+
+## Subcatergoies (Essential, Optional, ..)

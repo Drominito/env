@@ -1,0 +1,61 @@
+#!/bin/bash
+
+c=./configs
+h=$HOME
+
+if [ "$EUID" -ne 0 ]
+	then echo "You are not root - exiting!"
+	exit
+fi
+
+
+i3bar_file=$c/i3bar-river/config.toml
+i3status_file=$c/i3status-rust/config.toml
+vifm_file=$c/vifm/vifmrc
+vifm_color_file=$c/vifm/colors/Default.vifm
+vim_file=$c/.vimrc
+bash_file=$c/.bashrc
+tmux_file=$c/.tmux.conf
+kitty_file=$c/kitty.conf
+river_file=$c/init
+
+i3bar_dest=$h/.config/i3bar-river
+i3status_dest=$h/.config/i3status-rust
+vifm_dest=$h/.config/vifm/
+vifm_color_dest=$c/vifm/colors/
+vim_dest=$h
+bash_dest=$h
+tmux_dest=$h
+kitty_dest=$h/.config/kitty/
+river_dest=$h/.config/river/
+
+
+if [[ -f "$(pwd)/$i3bar_file" ]];
+then
+	printf "\e[32m + corret current ($(pwd)) directory \e[0m\n";
+	printf "\e[32m + $(pwd)/$i3bar_file does exist!\e[0m\n"
+else
+	printf "\e[31m - You have to be in the file directory - not in "$(pwd)"!\e[0m\n"
+	printf "\e[31m - $(pwd)/$i3bar_file does not exist!\e[0m\n"
+fi
+
+mkdir -v -p $i3bar_dest
+mkdir -v -p $i3status_dest
+mkdir -v -p $vifm_dest
+mkdir -v -p $vifm_color_dest
+#mkdir -p $vim_dest
+#mkdir -p $bash_dest
+#mkdir -p $tmux_dest
+mkdir -v -p $kitty_dest
+mkdir -v -p $river_dest
+
+cp -f $i3bar_file    $i3bar_dest
+cp -f $i3status_file $i3status_dest
+cp -f $vifm_file     $vifm_dest
+cp -f $vim_file      $vim_dest
+cp -f $bash_file     $bash_dest
+cp -f $tmux_file     $tmux_dest
+cp -f $kitty_file    $kitty_dest
+cp -f $river_file    $river_dest
+
+printf "\e[32m Programm exited sucsessfully \e[0m\n"
