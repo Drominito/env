@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# For firefox (you have to change it manually)
+mkdir down
+
+# file exchange - for other users(local/global),
+# or processes that don't have permissions e.g. Vencord.
+mkdir ~/fe
+
+# Usb-sticks: maybe other word for media?
+# pl-stick - none(maybe for backup/archive/mirror)
+# sandisk  - main
+# schubert - music
+# g-eheim  - some niche info with small data.
+mkdir -p media/{pl,sandisk,schubert,b,g}
+
+# -- -- HERE IS ~/mm
+# For later
+# ~/mm
+# ~/coding + repo (all extern's)
+#
+# on laptop are br m/mf and syncc - make a ln -s of it.
+# chage syncc in to something concrete
+
+
+# o-ther - when I get lazy
+mkdir ~/o
+
+# Obsidian in persoal-notes.
+ln -s ~/mm/pesno/Second-Brain ~/osi
+
+# -- -- HERE IS ~/repo
+
+# for sshfs
+mkdir ~/sf
+
+if [[ "$(uname -m)" -eq "x86_64" ]]; then
+    mkdir steamP
+else
+    echo "You are on $(uname -m) so have good luck to build X on your own!"
+    echo "- Steam(propably not, but still hope)"
+    echo "- Wine"
+    echo "- Factorio"
+    echo "- Blender"
+    echo "- Aseprite"
+fi
+
+
+# -- -- Files HERE like: m(obile)/mf(ile) | br(ightness) | syncc
+
+# manual copy - for tty or if wl-copy won't work
+touch mancpy
+
