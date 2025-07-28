@@ -1,0 +1,33 @@
+#!/bin/bash
+
+c="env/dotfiles"
+src="$HOME/repo/env/"
+configs="dotfiles/config"
+p="$src/$configs"
+
+
+str=("$HOME/coding/c/" "$HOME/repo/env/" "$HOME/repo/invalid/")
+
+for i in "${str[@]}"; do
+    if [ -d "$i/.git" ]; then
+        echo "Pulling $i from $(git -C "$i" remote -v | awk 'NR==1 {print $2}')"
+        git -C "$i" pull
+        echo
+    else
+        echo "$i does not exist"
+    fi
+done
+
+$src/scripts/cpf
+echo "INFO: cpf(copy file): symbolic links are added to ~/.config/*/* and ~/.*"
+
+dest="$HOME/syncc"
+if  [ ! -L "$dest" ]; then
+    ln -s "$0" "$dest"
+    echo "INFO: Created the syncc command in $HOME, so you can execute it next time."
+    echo "INFO: I won't add it to the PATH env-variable, because i'dont that it will become messy."
+fi
+
+
+
+

@@ -1,39 +1,46 @@
 #!/bin/bash
 
 
-#c=$(pwd | cut -d / -f5)
-c=env/dotfiles
-# maybe should just i cp it? - i think it's simpler
+c="env/dotfiles"
+src="$HOME/repo/env/"
+configs="dotfiles/config"
+p="$src/$configs"
 
-#ln -sf ~/repo/$c/i3bar-river   ~/.config/i3bar-river
-#ln -sf ~/repo/$c/i3status-rust ~/.config/i3status-rust
-#ln -sf ~/repo/$c/kitty         ~/.config/kitty
-#ln -sf ~/repo/$c/river         ~/.config/river
-#ln -sf ~/repo/$c/vifm          ~/.config/vifm
+ln -sf $src/dotfiles/home/.bashrc     ~/
+ln -sf $src/dotfiles/home/.tmux.conf  ~/
+ln -sf $src/dotfiles/home/.vimrc      ~/
 
-#ln -sf ~/repo/$c/.bashrc       ~/.bashrc
-#ln -sf ~/repo/$c/.tmux.conf    ~/.tmux.conf
+a="$HOME/.config/i3bar-river/"
+b="$HOME/.config/i3status-rust/"
+c="$HOME/.config/river/"
+d="$HOME/.config/kitty/"
+e="$HOME/.config/vifm/"
 
-# didn't knew that wild-cards ignore dotfiles by standard...
-# cp -fr ~/repo/dotfiles/home/*   ~/
+# Is this valid? - to check if all configs aren't missing.
+#files=($a $b $c $d $e)
 
-p=$(pwd)
-cp -fr $p/home/.bashrc     ~/
-cp -fr $p/home/.tmux.conf  ~/
-cp -fr $p/home/.vimrc      ~/
+mkdir -p {$a,$b,$c,$d,$e}
 
+# No I know that the first argument of ln is relative to the second argument.
+# But bruh, this information was not relevant for this...
+ln -sf $p/i3bar-river/*     $a
+ln -sf $p/i3status-rust/*   $b
+ln -sf $p/river/*           $c
 
-# Crap, but it should at leat work don't want spend much time on toolchains.
-mkdir -p ~/.config/i3bar-river/
-mkdir -p ~/.config/i3status-rust/
-mkdir -p ~/.config/kitty/
-mkdir -p ~/.config/river/
-mkdir -p ~/.config/vifm/
+ln -sf $p/kitty/*           $d
+ln -sf $p/vifm/*            $e
 
 
-cp -fr $p/config/i3bar-river/*   ~/.config/i3bar-river/
-cp -fr $p/config/i3status-rust/* ~/.config/i3status-rust/
-cp -fr $p/config/kitty/*         ~/.config/kitty/
-cp -fr $p/config/river/*         ~/.config/river/
-cp -fr $p/config/vifm/*          ~/.config/vifm/
+# Manual clear
+function clear () {
+
+	rm -fr $a $b $c $d $e
+ 	rm -f $HOME/{.bashrc,.tmux.conf,.vimrc}
+   	echo "INFO: All files are cleared(deleted)."
+}
+
+# to make possible to invoke function clear with 'cpf clear'
+if [ ! -z "$1" ]; then
+    "$1"
+fi
 
