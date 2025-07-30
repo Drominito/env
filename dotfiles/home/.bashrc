@@ -4,6 +4,10 @@
 export PATH="$HOME/bin:$PATH"
 export EDITOR=vim # oder vim, wenn du es bevorzugst
 
+#export XDG_SESSION_TYPE=wayland
+#export DISPLAY=:0
+#export WAYLAND_DISPLAY=wayland-1
+
 # Terminal-Optionen
 PS1='[\u@\h \W]\$ '
 
@@ -12,6 +16,10 @@ HISTCONTROL=ignoredups:ignorespace
 HISTSIZE=1000
 HISTFILESIZE=2000
 shopt -s histappend
+
+dbLck() {
+    sudo rm -f /var/lib/pacman/db.lck
+}
 
 mkc() {
   mkdir -p "$1" && cd "$1"

@@ -25,11 +25,13 @@
 #############################
 
 # Varaiblesk1
-bg="swww img $(fd -e jpg -L . ~/media/sandisk/Dromi/mm/images/bg | awk 'NR=='$(($RANDOM %51))'')"
+bg="swww img $(fd -e jpg -L . ~/media/sandisk/*/Dromi/mm/images/bg | awk 'NR=='$(($RANDOM %51))'')"
 bar="~/.cargo/bin/i3bar-river -c ~/.config/i3bar-river/config.toml"
 tile="rivertile -view-padding 0 -outer-padding 0 &"
 shoft="grim - | wl-copy && ffplay -nodisp ~/mm/sounds/samples/mp3/correct.mp3"
 str="kitty tmux && bash""
+# hmmmm -> kitty -- tmux
+# hmmmm -> kitty -- bash -c 'tmux; bash'
 
 
 # Resolutionk2
