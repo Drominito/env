@@ -1,0 +1,21 @@
+#!/bin/bash
+
+c=0
+while ! lsblk /dev/disk/by-label/sandiskS -o MOUNTPOINTS -n | grep -q '/'; do
+    sleep 1
+    ((c++))
+    echo "[$(date)] - still not mounted!"
+    if (( c % 15 == 0 )); then
+        notify-send "Still at $c seconds - not mounted!"
+    fi
+done
+
+notify-send "it's mounted now!"
+
+bg_image=$(fd -e jpg -L . ~/media/sandisk/sandiskS/Dromi/mm/images/bg | shuf -n 1)
+if [[ -f "$bg_image" ]]; then
+    swww img "$bg_image"
+else
+    notify-send "no background image found!"
+fi
+

@@ -1,0 +1,11 @@
+[Unit]
+Description=Automatically mount USB stick labeled 'sandiskS'
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bash -c '$HOME/repo/env/scripts/systemd/m-sandisk.sh; while sleep 10; do $HOME/repo/env/scripts/systemd/m-sandisk.sh; done'
+
+[Install]
+WantedBy=default.target
+
