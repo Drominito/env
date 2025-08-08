@@ -1,0 +1,4 @@
+riverctl keyboard-layout -variant neo_qwertz de
+riverctl keyboard-layout -variant neo de
+riverctl keyboard-layout de
+

@@ -1,8 +1,11 @@
 # ~/.bashrc
+# o
+# tty only 
+stty susp ^K
 
 # Umgebungsvariablen
 export PATH="$HOME/bin:$PATH"
-export EDITOR=vim # oder vim, wenn du es bevorzugst
+export EDITOR=vim
 
 #export XDG_SESSION_TYPE=wayland
 #export DISPLAY=:0
@@ -41,6 +44,14 @@ it() {
     done
 }
 
+br_kill() {
+  kill $(ps aux | rg firefox | rg browsh | awk '{print $2}')
+}
+
+alias v="vim" # lmao
+alias tcapture="tmux capture-pane -pt :$(tmux display-message -p -F '#{window_index}') | wl-copy"
+alias p="ping archlinux.org"
+alias mann="man man"
 alias dagit="dagit_Linux_arm64"
 alias l="ls -al"
 alias git-vis="git log --all --topo-order --graph --show-signature"

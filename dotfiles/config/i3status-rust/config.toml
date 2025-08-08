@@ -11,6 +11,19 @@ hide_when_empty = true
 interval = 3
 
 [[block]]
+block = "custom"
+interval = 1
+#command = "localectl|awk 'NR==4 {print $3}'"
+command = ''' /home/dromi/repo/env/scripts/layout/i3status-rust-wrapper.sh  '''
+
+[[block]]
+block = "custom"
+interval = 1
+#command = "localectl|awk 'NR==4 {print $3}'"
+command = ''' cat /home/dromi/.cache/tmp/layout_index  '''
+
+
+[[block]]
 alert = 10.0
 block = "disk_space"
 info_type = "available"

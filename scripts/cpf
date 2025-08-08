@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-c="env/dotfiles"
+#c="env/dotfiles"
 src="$HOME/repo/env/"
 configs="dotfiles/config"
 p="$src/$configs"
@@ -15,25 +15,35 @@ b="$HOME/.config/i3status-rust/"
 c="$HOME/.config/river/"
 d="$HOME/.config/kitty/"
 e="$HOME/.config/vifm/"
+f="$HOME/.config/swhkd/"
+
+# systemd
+g="$HOME/.config/systemd/user/"
 
 # Is this valid? - to check if all configs aren't missing.
 #files=($a $b $c $d $e)
 
-mkdir -p {$a,$b,$c,$d,$e}
+mkdir -p {$a,$b,$c,$d,$e,$f}
 
 # No I know that the first argument of ln is relative to the second argument.
 # But bruh, this information was not relevant for this...
-ln -sf $p/i3bar-river/*     $a
-ln -sf $p/i3status-rust/*   $b
-ln -sf $p/river/*           $c
+ln -sf $p/i3bar-river/*              $a
+ln -sf $p/i3status-rust/*            $b
+ln -sf $p/river/*                    $c
 
-ln -sf $p/kitty/*           $d
-ln -sf $p/vifm/*            $e
+ln -sf $p/kitty/*                    $d
+ln -sf $p/vifm/*                     $e
+
+ln -sf $p/swhkd/*                    $f
+
+
+ln -sf $src/scripts/systemd/user/hotkeys.service   $g/hotkeys.service
+ln -sf     ../hotkeys.service                     $g/default.target.wants/hotkey.service
+
 
 
 # Manual clear
 function clear () {
-
 	rm -fr $a $b $c $d $e
  	rm -f $HOME/{.bashrc,.tmux.conf,.vimrc}
    	echo "INFO: All files are cleared(deleted)."
@@ -43,4 +53,3 @@ function clear () {
 if [ ! -z "$1" ]; then
     "$1"
 fi
-

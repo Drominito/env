@@ -1,0 +1,2 @@
+ctrl + space
+    bash -c 'source /home/dromi/repo/env/scripts/layout/layout_script.sh'

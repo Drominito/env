@@ -1,7 +1,7 @@
 set encoding=utf-8
 set relativenumber
 set number
-syntax on set noswapfile
+set noswapfile
 set expandtab
 set tabstop=4
 set softtabstop=4
@@ -10,20 +10,29 @@ set autoindent
 set textwidth=80
 set nobackup
 
-" Tastenkürzel
-inoremap " ""<left>
-inoremap ' ''<left>
-inoremap { {}<left>
-inoremap {<CR> {<CR>}<ESC>O
-inoremap {;<CR> {<CR>};<ESC>O
-nnoremap <C-@> :call system("wl-copy", @")<CR>
-
 nnoremap <Up> :echo "Nutze 'k' statt ↑"<CR>
 nnoremap <Down> :echo "Nutze 'j' statt ↓"<CR>
 nnoremap <Left> :echo "Nutze 'h' statt ←"<CR>
 nnoremap <Right> :echo "Nutze 'l' statt →"<CR>
-
-
+" 
+" 
+" It's very annoying, because i can't repeat the / search funktion with n..
+" nnoremap <C-k> :suspend<CR>
+" 
+" nnoremap s h
+" nnoremap n j
+" nnoremap r k
+" nnoremap t l
+" 
+" vnoremap s h
+" vnoremap n j
+" vnoremap r k
+" vnoremap t l
+" 
+" onoremap s h
+" onoremap n j
+" onoremap r k
+" onoremap t l
 
 
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
@@ -40,9 +49,9 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 " Run PlugInstall if there are missing plugins
-autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-  \| PlugInstall --sync | source $MYVIMRC
-\| endif
+" autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+"   \| PlugInstall --sync | source $MYVIMRC
+" \| endif
 
 " Plugin-Manager
 call plug#begin()
@@ -59,4 +68,4 @@ let g:vimtex_view_method = 'mupdf'  " Entweder mupdf ODER okular nutzen
 " let g:vimtex_view_general_options = '--unique file:@pdf\#src:@line@tex'
 
 let g:vimtex_compiler_method = 'latexmk'
-let maplocalleader = ","
+let g:maplocalleader = ","

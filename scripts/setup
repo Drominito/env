@@ -7,6 +7,9 @@ mkdir down
 # or processes that don't have permissions e.g. Vencord.
 mkdir ~/fe
 
+# For temporary ideas - that will be switched to obsidian.
+mkdir ~/.idea
+
 # Usb-sticks: maybe other word for media?
 # pl-stick - none(maybe for backup/archive/mirror)
 # sandisk  - main
