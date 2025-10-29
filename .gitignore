@@ -1,1 +1,13 @@
 dotfiles/config/vifm/vifminfo.json
+
+dotfiles/home/.vim/*
+
+dotfiles/config/home/.task/*
+dotfiles/home/.task/taskchampion.sqlite3.bak
+dotfiles/home/.task/taskchampion.sqlite3
+
+dotfiles/config/kitty/kitty-themes
+
+# keep
+!dotfiles/home/.vim/pack/tmux-vim-balken
+.gmap
