@@ -1,5 +1,12 @@
 #!/bin/bash
+red="\e[31m"
+redd="\e[0m"
 
+if [ "$(pwd)" != "$HOME/repo/env/scripts" ]; then
+	echo -e "$red env have to be in ~/repo! $redd"
+	echo -e "$red And you have to be in ~/repo/env/scripts. $redd"
+    exit	
+fi
 
 #c="env/dotfiles"
 src="$HOME/repo/env/"
@@ -7,7 +14,14 @@ configs="dotfiles/config"
 p="$src/$configs"
 
 ln -sf $src/dotfiles/home/.bashrc     ~/
+ln -sf $src/dotfiles/home/.bash_*     ~/
+
 ln -sf $src/dotfiles/home/.tmux.conf  ~/
+ln -sf $src/dotfiles/home/.gitconfig  ~/
+
+ln -sf $src/dotfiles/home/.task   ~/.task
+ln -sf $src/dotfiles/home/.taskrc ~/.taskrc
+
 ln -sf $src/dotfiles/home/.vimrc      ~/
 
 a="$HOME/.config/i3bar-river/"
@@ -16,14 +30,13 @@ c="$HOME/.config/river/"
 d="$HOME/.config/kitty/"
 e="$HOME/.config/vifm/"
 f="$HOME/.config/swhkd/"
+g="$HOME/.config/mako/"
+h="$HOME/.config/lazygit/"
 
-# systemd
-g="$HOME/.config/systemd/user/"
 
 # Is this valid? - to check if all configs aren't missing.
 #files=($a $b $c $d $e)
-
-mkdir -p {$a,$b,$c,$d,$e,$f}
+mkdir -p {$a,$b,$c,$d,$e,$f,$g}
 
 # No I know that the first argument of ln is relative to the second argument.
 # But bruh, this information was not relevant for this...
@@ -32,14 +45,40 @@ ln -sf $p/i3status-rust/*            $b
 ln -sf $p/river/*                    $c
 
 ln -sf $p/kitty/*                    $d
-ln -sf $p/vifm/*                     $e
+ln -sf $p/lazygit/*                  $h
+ln -sf $p/mako/*					 $g
 
 ln -sf $p/swhkd/*                    $f
+ln -sf $p/vifm/*                     $e
 
+
+
+
+ln -sf $src/dotfiles/home/.vim   ~/.vim
+
+ln -sf $p/mpv/scripts ~/.config/mpv/scripts
+ln -sf $p/btop/btop.conf		  ~/.config/btop
+
+# systemd
+g="$HOME/.config/systemd/user/"
+mkdir -p $g/default.target.wants
 
 ln -sf $src/scripts/systemd/user/hotkeys.service   $g/hotkeys.service
 ln -sf     ../hotkeys.service                     $g/default.target.wants/hotkey.service
 
+ln -sf $src/scripts/systemd/user/timew-auto.service $g/timew-auto.service
+ln -sf 	   ../timew-auto.service                    $g/default.target.wants/timew-auto.service
+
+ln -sf $src/scripts/systemd/user/timew-auto.timer   $g/timew-auto.timer
+ln -sf 	   ../timew-auto.timer			    		$g/default.target.wants/timew-auto.timer
+
+ln -sf $src/scripts/systemd/user/mama-ntfy_sh.service $g/mama-ntfy_sh.service
+ln -sf ../mama-ntfy_sh.service						  $g/default.target.wants/mama-ntfy_sh.service
+
+
+#scripts in ~
+mkdir -p $HOME/bin # this should be managed by scripts/setupDirs
+ln -sf $src/scripts/tilde/ 	$HOME/bin
 
 
 # Manual clear
@@ -53,3 +92,7 @@ function clear () {
 if [ ! -z "$1" ]; then
     "$1"
 fi
+
+# how i could make an function (ln) that will execute the normal command, but also read the current line, to see what it will be executeed?
+
+# I think, more verbosity would not hurt and **could** help.

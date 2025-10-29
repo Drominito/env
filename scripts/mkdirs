@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # For firefox (you have to change it manually)
-mkdir down
+mkdir ~/down
 
 # file exchange - for other users(local/global),
 # or processes that don't have permissions e.g. Vencord.
@@ -15,7 +15,7 @@ mkdir ~/.idea
 # sandisk  - main
 # schubert - music
 # g-eheim  - some niche info with small data.
-mkdir -p media/{pl,sandisk,schubert,b,g}
+mkdir -p ~/media/{pl,sandisk,schubert,b,g}
 
 # -- -- HERE IS ~/mm
 # For later
@@ -29,6 +29,8 @@ mkdir -p media/{pl,sandisk,schubert,b,g}
 # o-ther - when I get lazy
 mkdir ~/o
 
+mkdir ~/.undodir
+
 # Obsidian in persoal-notes.
 ln -s ~/mm/pesno/Second-Brain ~/osi
 
@@ -37,8 +39,11 @@ ln -s ~/mm/pesno/Second-Brain ~/osi
 # for sshfs
 mkdir ~/sf
 
+#-ash
+mkdir ~/.tr
+
 if [[ "$(uname -m)" -eq "x86_64" ]]; then
-    mkdir steamP
+    mkdir ~/steamP
 else
     echo "You are on $(uname -m) so have good luck to build X on your own!"
     echo "- Steam(propably not, but still hope)"
@@ -52,5 +57,12 @@ fi
 # -- -- Files HERE like: m(obile)/mf(ile) | br(ightness) | syncc
 
 # manual copy - for tty or if wl-copy won't work
-touch mancpy
+touch ~/mancpy
 
+mkdir -p ~/c/{OneDrive,p,webdav}
+
+
+# -- --
+
+# Delete these standard directories:
+rm ~/{Desktop,Documents,Downloads,Music,Pictures,Public,Templates,Videos}
