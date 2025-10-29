@@ -1,0 +1,174 @@
+# ~/.bash_fn
+
+
+# see what bin's the package offers
+bins() {
+	pacman -Ql "$1" | rg bin
+}
+
+tcapture() {
+delay="${1:-0}"
+sleep "$delay"
+tmux capture-pane -pt ":$(tmux display-message -p -F '#{window_index}')" | wl-copy
+}
+
+ttcapture() {
+delay="${1:-0}"
+sleep "$delay"
+tmux capture-pane -pt ":$(tmux display-message -p -F '#{window_index}')"
+}
+
+tt() {
+	clear && tgpt "$1" | glow
+}
+
+tpdf() {
+	pdftotext -layout "$1" - | bat
+}
+
+
+gurl() { 
+    for pkg in "$@"; do
+        paru -Si "$pkg" | rg '^URL' | awk -F': ' 'NR==1 {print $2}'
+    done
+}
+
+ggurl() { 
+    for pkg in "$@"; do
+        paru -Si "$pkg" | rg '^URL' | awk -F': ' 'NR==1 {print $2}' | wl-copy
+    done
+}
+
+
+#This is a - *B*at*H*elp! 🦇 
+bh() {
+	"$1" --help | bat
+}
+
+# *o*ffline searching
+iinfo()  { pacman -Qi "$@"; 	}
+oinfo()  { iinfo "$@";			 	}
+
+# - -
+
+# package/print - info
+pinfo()  { 
+    for pkg in "$@"; do
+        paru -Si "$pkg"
+    done
+}
+# *b*uild
+pkg-b()  { 
+    for pkg in "$@"; do
+        paru -Gp "$pkg" | bat
+    done
+}
+
+# srpkg is an alias | *c*ontent
+srpkg-c() {
+	srpkg "$1" | rg aur | cut -d/ -f2 | cut -d' ' -f1
+}
+
+ssrpkg-c() {
+	ssrpkg "$1" | rg local | cut -d/ -f2 | cut -d' ' -f1
+}
+
+ssrpkgb-c() {
+	ssrpkg "$1" | rg local | cut -d/ -f2 | cut -d' ' -f1 | bat
+}
+
+
+
+
+# maybe i'll delete these later
+srcpkg-b() {
+	paru -Ss "$1"| bat
+}
+# maybe i'll delete these later
+srcpkgp-b() {
+	pacman -Ss "$1"| bat
+}
+
+
+#~sicher ist sicher~
+rm() {
+  mv "$@" ~/.tr
+}
+
+# - -
+
+
+wl() {
+	export WAYLAND_DISPLAY=wayland-1
+	grim "$HOME/mm/img/grim/file.png"
+	fyi "shot" # already makes some sound
+	#nohup ffplay "$HOME/mm/sounds/samples/mp3/correct.mp3" &
+	nohup bash -c "sleep 5 && pkill -f -9 ffplay" &
+}
+
+# hmm, why does it take sooo loong??
+# 🦊
+foxi()  { 
+    for url in $(gurl "$@"); do
+        firefox "$url"
+    done
+}
+
+
+
+
+mkc() {
+	mkdir -p "$1" && cd "$1"
+}
+
+# <s>ea<r>ch - bat
+srpkgb() { 
+	paru -Ss "$1" | bat
+}
+srpkgpb() { 
+	pacman -Ss "$1" | bat
+}
+
+
+# e<x>e<c(k)>ute
+xk() {
+. "$(fzf -q $@)"
+}
+
+
+vm() {
+  v "$(fzf -q $@)"
+}
+
+
+cai() {
+  bat "$(fzf -q $@)"
+}
+
+v() {
+if [ $# -eq 0 ]; then
+	command vim
+elif [ -d "$1" ]; then
+	vifm "$1"
+else
+	command vim "$@"
+fi
+}
+
+nano() { command vim "$@"; } # yes.
+
+it() {
+count="${1:-1}"
+shift 2>/dev/null
+for i in $(seq 1 "$count"); do
+	"$@"
+done
+}
+
+mama() {
+ntfy pub mama "$1"
+}
+
+# Ich möchte direkt den Pfad eingeben, ohne explizit hinschreiben ob es text oder bin ist. (so muss ich weder <./> <.|> <bat ..> noch <v ..> eintippen.
+ 
+

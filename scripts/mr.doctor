@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+ww() {
+  local msg="$1"
+  echo -e "\033[1;34m$msg\033[0m"
+  sleep 1
+  clear
+}
+
+ww "(1/8) refresh pacman file databases"
+sudo pacman -Fy
+
+ww "(2/8) update tldr pages"
+tldr -u
+
+ww "(3/8) clear pacman cache of unused packages (not installed)"
+sudo pacman -Sc --noconfirm
+
+ww "(4/8) delete pacman orphans"
+orphans=$(pacman -Qdtq || true)
+if [ -n "$orphans" ]; then
+    sudo pacman -R --noconfirm $orphans
+else
+    echo "No orphan packages to remove."
+fi
+
+# -- -- — next step here
+ww "(5/8) select directories to delete/exclude"
+dirs=(~/o ~/down ~/Downloads ~/repo)
+# -- --
+
+ww "(6/8) update flatpak packages"
+flatpak update -y
+
+ww "(7/8) final: pull pacman upgrade"
+pull  # direkt aufrufen, ohne interaktive Shell
+
+ww "(8/8) update pkgfile"
+sudo pkgfile --verbose --update
+
