@@ -1,0 +1,11 @@
+[Unit]
+Description=Notify when Sandisk USB is plugged in
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "%h/repo/env/scripts/systemd/user/scripts/mount-sandisk.sh  >> /home/dromi/.cache/tmp/udev/udev-sandiskS.log 2>&1"
+
+
+[Install]
+WantedBy=default.target
+
