@@ -27,23 +27,33 @@
 # Varaiblesk1
 
 bar="~/.cargo/bin/i3bar-river -c ~/.config/i3bar-river/config.toml"
-tile="rivertile -view-padding 0 -outer-padding 0 &"
-shoft="grim - | wl-copy && ffplay -nodisp ~/mm/sounds/samples/mp3/correct.mp3"
-str="kitty tmux && bash""
-# hmmmm -> kitty -- tmux
-# hmmmm -> kitty -- bash -c 'tmux; bash'
+tile="rivertile -view-padding 2 -outer-padding 10 &"
+shoft="bash -ic wl" # .bash_aliases
+
 
 
 # Resolutionk2
 # --transform 90"
-riverctl spawn "wlr-randr --output HDMI-A-1 --mode 1920x1080@60.00000"
-riverctl map normal Alt V spawn "wlr-randr --output HDMI-A-1 --transform normal --mode 3440x1440@99.982002 --scale 1.75"
+
+# If I'm on the industry-pc from Eaton Automation GmbH
+wlr-randr --output eDP-1 --off
+
+# bigme-eink monitor
+main-res="wlr-randr --output HDMI-A-1 --mode 3200x1800@25.000000 --scale 2"
+riverctl spawn "wlr-randr --output HDMI-A-1 --mode 1800x3200@24.224001 --scale 2"
+#riverctl spawn "wlr-randr --output HDMI-A-1 --mode 3200x1800@25.000000 --scale 2"
+#riverctl spawn "$main-res"
+
+# old vertical monitor
+riverctl map normal Alt V spawn "wlr-randr --output HDMI-A-1 --transform normal --mode 3440x1440@99.982002 --scale 2"
+
 
 # Keyboardk3
 # I thought to not only learn neo but also colemak. maybe even 31 too
 # How could i switch the layouts?
 riverctl set-repeat 50 300
 # change it to ctrl+shift+L
+
 riverctl keyboard-layout -variant neo_qwertz de
 # unfortunately that wont work with **swkhd**, for some reason.
 # So i have just add manual riverctl keybaord-layout script manualy... - now good night.
@@ -52,16 +62,23 @@ riverctl keyboard-layout -variant neo_qwertz de
 #----------------------------------------------------------------------#
 #-----------------------------Progsk4----------------------------------#
 #----------------------------------------------------------------------#
-riverctl spawn swww-daemon
-riverctl spawn ~/repo/env/scripts/mk-swww
-#riverctl spawn "$bg"
-riverctl spawn "$bar"
-riverctl spawn "$str"
 
 riverctl spawn mako &
-riverctl spawn swhks &
-riverctl spawn 'sudo swhks' &
 
+swww kill && sleep 1
+riverctl spawn swww-daemon
+riverctl spawn ~/repo/env/scripts/media/mk-swww &
+sleep 1 && riverctl spawn ~/repo/env/scripts/media/mk-swww
+
+#riverctl spawn "$bg"
+riverctl spawn kitty
+riverctl spawn "$bar"
+
+riverctl spawn "swhks & pkexec swhkd -c ~/.config/swhkd/swhkdrc"
+#riverctl swawn aw-qt # i have timew now
+
+
+# Only needed, until i won't have an e-ink laptop
 #wlsunset -l 47.9 -L 8.9 &
 #sudo wluma
 
@@ -79,10 +96,11 @@ riverctl map normal Control E spawn "firefox &"
 riverctl map normal Super W spawn kitty
 riverctl map normal Alt M spawn "rofi -show drun"
 riverctl map normal Alt T spawn "rofi -show p -modi p:rofi-power-menu"
-riverctl map normal Super S spawn "$shot"
-riverctl map normal Super L spawn "rofi -modi emoji -show emoji"
+riverctl map normal Super S spawn "$shoft" # screenshot
+riverctl map normal Super N spawn "rofi -modi emoji -show emoji"
 
-riverctl map normal Alt 0 spawn "riverctl output-layout rivertile"
+riverctl spawn "snixembed --fork &" # for safeeyes
+#riverctl spawn "ntfy sub mama 'fyi "$topic: $t - $m"' &" # somehow it don't work - i just add it to .bashrc
 
 
 
@@ -96,13 +114,21 @@ riverctl map normal Alt 0 spawn "riverctl output-layout rivertile"
 # Window Navigation
 #----------------------------------------------------------------------#
 #-----------------------Widdow-Stuffk5---------------------------------#
-# &----------------------------------------------------------------------#
+#------------------------------------------------------------------------#
 
+# reload crucial stuff
+
+#riverctl map normal Alt 0 spawn "riverctl output-layout rivertile; riverctl spawn $tile; riverctl spawn $main-res"
+riverctl map normal Alt 0 spawn "riverctl output-layout rivertile" # somehow itt does not work...
+riverctl map normal Alt 0 spawn "$bar"
 riverctl output-layout rivertile
-rivertile -view-padding 0 -outer-padding 0 &
+riverctl spawn "$tile"
+
 # g->i | f->o
-riverctl map normal Super G spawn "river-shifttags --shifts -1"
-riverctl map normal Super F spawn "river-shifttags --shifts +1"
+#riverctl map normal Super G spawn "river-shifttags --shifts -1"
+#riverctl map normal Super F spawn "river-shifttags --shifts +1"
+riverctl map normal Super I spawn "river-shifttags --shifts -1"
+riverctl map normal Super O spawn "river-shifttags --shifts +1"
 riverctl map normal Super Space toggle-float
 
 riverctl background-color 0x002b36
@@ -116,26 +142,47 @@ riverctl map-pointer normal Super BTN_MIDDLE toggle-float
 # f->e
 # e->l
 # q->x
-riverctl map normal Super S send-layout-cmd rivertile "main-ratio -0.05"
-riverctl map normal Super T send-layout-cmd rivertile "main-ratio +0.05"
-riverctl map normal Super+Shift R send-layout-cmd rivertile "main-location top"
-riverctl map normal Super+Shift T send-layout-cmd rivertile "main-location right"
-riverctl map normal Super+Shift N send-layout-cmd rivertile "main-location bottom"
-riverctl map normal Super+Shift S send-layout-cmd rivertile "main-location left"
+#riverctl map normal Super S send-layout-cmd rivertile "main-ratio -0.05" # super-S is for screenshot
 
-riverctl map normal Super+Alt+Control S snap left
-riverctl map normal Super+Alt+Control N snap down
-riverctl map normal Super+Alt+Control R snap up
-riverctl map normal Super+Alt+Control T snap right
+#riverctl map normal Super T send-layout-cmd rivertile "main-ratio +0.05"
+#riverctl map normal Super L send-layout-cmd rivertile "main-ratio +0.05"
+
+riverctl map normal Super H send-layout-cmd rivertile "main-ratio -0.05"
+riverctl map normal Super L send-layout-cmd rivertile "main-ratio +0.05"
+
+#riverctl map normal Super+Shift R send-layout-cmd rivertile "main-location top"
+#riverctl map normal Super+Shift T send-layout-cmd rivertile "main-location right"
+
+riverctl map normal Super+Shift K send-layout-cmd rivertile "main-location top"
+riverctl map normal Super+Shift L send-layout-cmd rivertile "main-location right"
+
+#riverctl map normal Super+Shift N send-layout-cmd rivertile "main-location bottom"
+#riverctl map normal Super+Shift S send-layout-cmd rivertile "main-location left"
+
+riverctl map normal Super+Shift J send-layout-cmd rivertile "main-location bottom"
+riverctl map normal Super+Shift H send-layout-cmd rivertile "main-location left"
+
+#riverctl map normal Super+Alt+Control S snap left
+#riverctl map normal Super+Alt+Control N snap down
+#riverctl map normal Super+Alt+Control R snap up
+#riverctl map normal Super+Alt+Control T snap right
+
+riverctl map normal Super+Alt+Control H snap left
+riverctl map normal Super+Alt+Control J snap down
+riverctl map normal Super+Alt+Control K snap up
+riverctl map normal Super+Alt+Control L snap right
 
 riverctl map normal Super Super Q enter-mode passthrough
 riverctl map normal Super Return zoom
 riverctl map normal Super E toggle-fullscreen
 
-riverctl map normal Super N focus-view next
-riverctl map normal Super R focus-view previous
+#riverctl map normal Super N focus-view next
+#riverctl map normal Super R focus-view previous
 
-riverctl map normal Super+Shift L exit
+riverctl map normal Super J focus-view next
+riverctl map normal Super K focus-view previous
+
+riverctl map normal Super+Shift B exit
 riverctl map normal Super X close
 
 
@@ -196,8 +243,6 @@ riverctl map normal Super+Shift 0 set-view-tags $all_tags
 #riverctl map normal Super I enter-mode tilted
 #riverctl declare-mode tilted
 # Super+{Up,Right,Down,Left} to change layout orientation
-#waybar &
-#polybar &  
 #riverctl map normal Super+Shift A spawn "grim -g $(slurp) | wl-copy && ffplay -nodisp ~/mm/sound/samples/mp3/correct.mp3"
 #-$--------------------------------------------------------------------$-#
 #-$----------------------commments-------------------------------------$-#
@@ -226,9 +271,17 @@ riverctl map normal Super+Shift 0 set-view-tags $all_tags
 #-$--------------------------------------------------------------------$-#
 # Super + Left Mouse Button to move views
 #riverctl map-pointer normal Super BTN_RIGHT resize-view
-#riverctl spawn nm-applet
-#riverctl spawn volumeicon
 
+
+
+
+# -- --
+# BUGS (kinda)
+# -- --
+
+# 1.0: The 'Super'-Key didn't worked at all. It printed some Escape-Sequences in kitty-terminal. Really annoying.
+# 1.1: tile-variable had to be run with & | and as an variable it should be run with riverctl "$tile" (with brackets!)
+# 1.2: Note: Fortunately there is no difference in order executing 'riverctl output-layout rivertile' and 'riverctl spawn "$tile"'
 
 
 
