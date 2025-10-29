@@ -11,3 +11,4 @@ dotfiles/config/kitty/kitty-themes
 # keep
 !dotfiles/home/.vim/pack/tmux-vim-balken
 .gmap
+dotfiles/config/kitty/kitty-themes
