@@ -66,15 +66,20 @@ pkg-b()  {
 
 # srpkg is an alias | *c*ontent
 srpkg-c() {
-	srpkg "$1" | rg aur | cut -d/ -f2 | cut -d' ' -f1
+	srpkg -q "$1"
 }
 
+srpkgb-c() {
+	srpkg -q "$1" | bat
+}
+
+
 ssrpkg-c() {
-	ssrpkg "$1" | rg local | cut -d/ -f2 | cut -d' ' -f1
+	ssrpkg -q "$1"
 }
 
 ssrpkgb-c() {
-	ssrpkg "$1" | rg local | cut -d/ -f2 | cut -d' ' -f1 | bat
+	ssrpkg -q "$1" | bat
 }
 
 
