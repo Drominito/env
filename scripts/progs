@@ -1,6 +1,24 @@
 #!/bin/bash
 fi="INSTALL-INFO:"
-pfo="-S --needed" # pacman-flag-option
+pcfo="sudo pacman -S --needed" # pacman-flag-option
+pfo="sudo pacman -S --needed" # pacman-flag-option
+
+# changelog
+# warp-terminal-bin - yay arm support 
+#(maybe write an event handler to notify for more packages that become arm compatible?)
+
+# shortcuts
+# wit = what is this
+# !arm = no support for ARM archicture (a note to manage it seperately)
+
+# -- --
+# wit
+# -- --
+# helvum
+#
+#
+#
+#
 
 # OPTIONS
 # -sys
@@ -42,119 +60,234 @@ fi
 
 if [[ "$*" == *"-sys"* || "$*" == *"-a"* ]]; then
 	echo "$fi (-sys) Installing System Prog's"
-	sudo pacman $pfo wireplumber iwd networkmanager pipewire pipewire-alsa pipewire-pulse pipewire-audio alsa-tools alsa-utils alsa-firmware
+	$pcfo wireplumber iwd
+	$pcfo pipewire pipewire-alsa pipewire-pulse pipewire-audio
+	$pcfo alsa-tools alsa-utils alsa-firmware # [P]
+	$pcfo helvum tailscale   
 fi
 
 
 # Required uncommented section about [multilib] in /etc/pacman.conf
 if [[ "$*" == *"-deps"* || "$*" == *"-a"* ]]; then
 	echo "$fi Installing Libs"
-	sudo pacman  $pfo gcc clang cargo rustup go wayland wl-clipboard wlr-randr base-devel debugedit fakeroot
+	$pcfo pkgconf gcc clang ccache cargo trunk rustup go wayland wl-clipboard xclip ydotool wlr-randr base-devel debugedit fakeroot # [P]
 	echo "$fi Installing Drivers"
-	sudo pacman $pfo xf86-video-intel mesa lib32-mesa vulkan-intel lib32-vulkan-intel # For Intergrated Intel GPU's
+	$pcfo xf86-video-intel mesa lib32-mesa vulkan-tools vulkan-intel lib32-vulkan-intel # [P]
 	# FOSS-Drivers (For experimental Purposes)
-	#sudo pacman $pfo  vulkan-nouveau lib32-vulkan-nouveau xf86-video-nouveau
-	# sudo pacman $pfo lib32-nvidia-utils nvidia-utils # For newer GPU's
-	yay $pfo lib32-nvidia-470xx-utils 
-	#nvidia-470xx-utils nvidia-470xx-dkms # Install these manually
-	#sudo pacman $pfo opencl-nvidia-470xx # Propably already in some of these packages included
+	# $pcfo vulkan-nouveau lib32-vulkan-nouveau xf86-video-nouveau
+	# $pcfo lib32-nvidia-utils nvidia-utils # For newer GPU's
 
+	# for hp laptop
+	#$pfo lib32-nvidia-470xx-utils # [A]
 
+	# nvidia-470xx-utils nvidia-470xx-dkms # Install these manually
+	# $pcfo opencl-nvidia-470xx # Propably already in some of these packages included
 fi
 
 
 if [[ "$*" == *"-ex"* || "$*" == *"-a"* ]]; then
 	echo "$fi (-ex) Installing exernal's"
 	rustup default stable
-	cargo install --list | rg -q "i3bar-river"
-	if [[ $? == 0 ]]; then
-		echo "i3bar-river already exists"		
-	fi
-	cargo install --locked i3bar-river
-
-	#+river-shifttags 
-	cargo install --list | rg -q "river-shifttags"
-	if [[ $? == 0 ]]; then
-		echo "river-shifttags already exists"		
-	fi
-
-	echo "Installing river-shifttags manually"
-	trgt="$HOME/repo/river-shifttags/"
-	mkdir -p $trgt
-	git clone https://gitlab.com/akumar-xyz/river-shifttags.git $trgt
-	printf "Switching to $s\n" "$trgt"
-	(cd "$trgt" && make && sudo make install)
-
-	#-river-shifttags 
-	
-
+	cargo install --list | rg -q "i3bar-river" && echo "i3bar-river already exists" || cargo install --locked i3bar-river
+	# +river-shifttags 
+	cargo install --list | rg -q "river-shifttags" || {
+		echo "Installing river-shifttags manually"
+		trgt="$HOME/repo/river-shifttags/"
+		mkdir -p "$trgt"
+		git clone https://gitlab.com/akumar-xyz/river-shifttags.git "$trgt"
+		(cd "$trgt" && make && sudo make install)
+	}
 fi
-
 
 
 # pacman
 if [[ "$*" == *"-pm"* || "$*" == *"-a"* ]]; then
 	echo "$fi (-pm) Installing main pacman's"
-	sudo pacman  $pfo less bat vim vifm tmux man reptyr fd bash kitty river swww rofi i3status-rust firefox 
+	# Core terminal tools
+	$pcfo bash bat evtest eza fd firefox flatpak i3status-rust kitty less man reptyr river swww plasma-desktop rofi starship tmux vifm vim wev zoxide # [P]
+
+	# Communication & News
+	$pcfo croc neomutt whatsie ttyd kdeconnect # [P]
+	$pfo weechat-matrix # [A]
+	$pcfo canto-curses newsboat # [P]
+
+	# Browsers (terminal)
+	$pfo browsh creddit-git daylight ferroxide luakit-git reddio reddit-tui-bin wppfzf # [A]
+
+	# Networking (core, advanced) + helpers
+	$pcfo arp-scan borg dhcpcd dhcpcd dhclient fail2ban iproute2 nmap nm-connection-editor net-tools networkmanager rclone rsync syncthing ufw wpa_supplicant # [P]
+	$pcfo aircrack-ng avahi mtr nss-mdns tcpdump tracepath traceroute wireless_tools # [P]
+	$pfo nm-tray odhcpd-git # [A]
+
+	# Connectivity
+	$pcfo bluetui connman cyme kdeconnect wavemon # [P]
+
+	# Cloud & Sync
+	$pfo megatools micromamba onedrive-abraunegg pcloud-drive pcloudcc-git proot # [A]
+	$pcfo fyi inotify-tools # [P]
+	$pfo ngrok nm-tray ntfysh-bin odhcpd-git # [A]
+
+	# Security / Firewall
+	$pcfo firewalld fuse2 # [P]
+
+	# System info & GPU
+	$pcfo i2c-tools mangohud nvidia-utils scrcpy wine wlr-randr # [P]
+	$pfo drm_info powerstat-git # [A]
+
+	# Monitoring & Wellness
+	$pcfo batsignal # [P]
+	$pfo safeeyes stretchly-bin wluma # [A]
+
+	# Text processing
+	$pcfo htmlq jq # [P]
+	$pfo basalt jqp-bin mdfried-bin pinfo pup # [A]
+
+	# File management
+	$pcfo diskonaut dust ncdu pkgfile plocate termdown tree # [P]
+
+	# Productivity
+	$pcfo jrnl zk birthday # [P]
+	$pcfo task vit obsidian # [P]
+	$pfo calendar-cli taskvanguard wish # [A]
+	$pcfo remind timew # [P]
+
+	# Documentation
+	$pcfo asciidoc check-docs doxygen man-pages man-pages-de # [P]
+	$pcfo wikiman wiki-tui # [P]
+	# removed: wiki-ncurses (not found)
+
+	# PDF & Recording
+	$pcfo asciinema eyedropper grim hyprpicker poppler slurp wf-recorder # [P]
+	$pfo tdf-git tplay-git wl-screenrec-git # [A]
+
+	# Session tools
+	$pfo sesh-bin swhkd-bin # [A]
+
+	# CLI UI
+	$pcfo broot glow gum # [P]
+
+	# TUI / Games / ASCII
+	$pcfo asciiquarium banner boinctui figlet # [P]
+	$pcfo crawl-ncurses mari0 warsow # [P]
+	$pcfo dhex # [P]
+
+	# Cursors / tools
+	$pcfo expac # [P]
+	$pfo bibata-cursor-bin bibata-cursor-git # [A]
+
+	# Python tools (AUR python-*)
+	py=(archspec uv)
+	for p in "${py[@]}"; do $pfo "python-$p"; done
+
+	# Git tools
+	$pfo lazygit-git legit-git nodejs-git-stats gh-heats forge-sparks # [A]
+
+	# AI
+	$pcfo amfora ollama pyenv # [P]
+	$pfo agate-bin asuka-git telescope warp-terminal-bin # [A]
+	$pcfo tgpt # [P]
+	sudo npm install -g @google/gemini-cli@latest
 fi
 
 if [[ "$*" == *"-po"* || "$*" == *"-a"* ]]; then
 	echo "$fi (-po) Installing other pacman's"
-	sudo pacman $pfo zathura scrcpy ffmpeg w3m docker mako wayvnc waylock wireshark-cli openssh rsync rclone ncdu ncurses bluetui ninja cmake ccache octave ufw fail2ban fastfetch  playerctl mpv vlc cmus grim slurp ripgrep tealdeer speedtest-cli viu chafa btop sdl2 sdl3 python-pip python-pip net-tools avahi
-#pam
-fi
+	# split long line, keep PACMAN-only here
+	$pcfo docker docker-compose ffmpeg mako podman tigervnc waylock wayvnc w3m zathura # [P]
+	$pcfo bluetui ccache cmake ncurses ninja nix openssh wireshark-cli # [P]
+	$pcfo cmus fail2ban fastfetch firewalld gnuplot mpv octave playerctl ripgrep speedtest-cli tealdeer ufw vlc # [P]
+	$pcfo btop chafa glances networkmanager iotop net-tools netctl netdata netplan python-pip sdl2 sdl3 viu # [P]
+	$pcfo avahi binsider dtc figlet glib-networking gobuster pandoc qrencode socat spinner strace traceroute # [P]
+	$pcfo inetutils # [P]
+	# AUR moved out of PACMAN line
+	$pfo archivebox-git chs-git p4 wppfzf # [A]
 
+	# Trading
+	$pfo tradingview # !arm [A]
+
+	# Misc utils
+	$pcfo eom lorem mokutil ncmpcpp # [P]
+	$pfo uci-git # [A]
+
+	# Fun
+	$pcfo lolcat # [P]
+	$pcfo clairvoyant cowfortune cowsay ponysay # [P]
+
+	# Creative
+	$pcfo audacity blender drawing f3d gimp godot krita pencil2d synfig # !arm [P]
+	$pcfo fluidsynth lmms reaper # [P]
+	$pfo bespokesynth bitwig-studio zrythm # [A]
+
+
+
+
+
+
+fi
 
 
 # flatpak
 if [[ "$*" == *"-fm"* || "$*" == *"-a"* ]]; then
 	echo "$fi (-fm)  Installing main flatpak's"
-	 flatpak install flathub md.obsidian.Obsidian
-	 flatpak install flathub org.audacityteam.Audacity
-	 flatpak install flathub com.saivert.pwvucontrol
+	flatpak install flathub org.audacityteam.Audacity
+	flatpak install flathub com.saivert.pwvucontrol
 fi
 
 
 if [[ "$*" == *"-fo"* || "$*" == *"-a"* ]]; then
 	echo "$fi (-fo)  Installing other flatpak's"
-	 flatpak install flathub com.ktechpit.whatsie
-	 flatpak install flathub com.github.maoschanz.drawing
-	 flatpak install flathub org.pencil2d.Pencil2D
-	 flatpak install flathub org.chromium.Chromium
-	 flatpak install flathub org.godotengine.Godot
-	 flatpak install flathub org.kde.krita
-	 flatpak install flathub org.gimp.GIMP
+	flatpak install flathub org.chromium.Chromium
 fi
-
 
 
 if [[ "$*" == *"-aur"* || "$*" == *"-a"* ]]; then
 	echo "$fi (-aur) -Installing AUR packages"
-	yay $pfo mosh mosh-agent bluealsa rofi-emoji-git brave-git latex-mk
+	# keep only AUR here
+	$pfo bluealsa brave-git latex-mk mosh mosh-agent rofi-emoji-git tailscale zerotier-one # [A]
 fi
-
-
 
 
 if [[ "$*" == *"-games"* || "$*" == *"-a"* ]]; then
 	echo "$fi (-nerd) Installing Games(Steam, Flathub, .."
 	flatpak install flathub com.valvesoftware.Steam
+	$pfo polymc-qt5-bin # [A]
 fi
 
 if [[ "$*" == *"-nerd"* || "$*" == *"-all"* ]]; then
 	echo "$fi (-nerd) Installing ALL Nerd-Fonts(HEAVY ~10GB)"
-	#sudo pacman $pfo $(pacman -S nerd-fonts | cut -d/ -f2 | cut -d' ' -f1)
-	sudo pacman $pfo otf-firamono-nerd ttf-firacode-nerd
-	
+	# $pcfo $(pacman -S nerd-fonts | cut -d/ -f2 | cut -d' ' -f1)
+	$pcfo otf-firamono-nerd ttf-firacode-nerd # [P]
+	# bibata cursor / monocraft
 fi
 
 if [[ "$*" == *"-o"* || "$*" == *"-a"* ]]; then
 	echo "$fi (-o) Installing Other stuff"
-	sudo pacman  $pfo ttf-ms-win11-auto lf ueberzugpp imagemagick  ffmpegthumbnailer
-	yay $pfo drm_info powerstat-git powerstat-git dracut mokutil polymc  poppler fontpreview
+	$pcfo ffmpegthumbnailer imagemagick lf ttf-ms-win11-auto ueberzugpp # [P]
+	$pfo drm_info fontpreview polymc powerstat-git # [A]
+	# pacman extras
+	$pcfo dracut mokutil poppler # [P]
 	#https://github.com/thimc/vifmimg?tab=readme-ov-file
-	#yay $pfo steam-devices-git
-	
+	# $pfo steam-devices-git
+fi
+
+
+if [[ "$*" == *"-g"* || "$*" == *"-a"* ]]; then
+	echo "$fi (-o) Installing github-cli Extensions"
+	gh extension install benelan/gh-notify-desktop # for i3 but with -cP
+	gh extension install github/gh-copilot # mb better than tt
+	gh extension install jrnxf/gh-eco # cool preview for user profiles
+	gh extension install gennaro-tedesco/gh-s # basic repo search
+	gh extension install mona-actions/gh-repo-stats
+	gh extension install korosuke613/gh-user-stars
+	gh extension install vilmibm/gh-screensaver
+
+	gh extension install dlvhdr/gh-dash # for pr
+	gh extension install github/gh-net # hmm, maybe having codespace in cli?
+	gh extension install KOBA789/gh-sql
+	gh extension install github/gh-skyline # mb for cool dashboards/preview (inspiration)
+
+	# propably there is some way to install (1), but i could not found (dont wan't to spend time to search)
+	# (1): https://github.com/kardolus/chatgpt-cli
+	gh ext install redraw/gh-install
 fi
 
 
@@ -167,9 +300,49 @@ fi
 ## 4. Eleganter: case statt if [[ "$*" == *"-x"* ]]
 ## Du könntest über ein Rework mit for arg in "$@"; do case $arg in ...) nachdenken – ist aber Geschmackssache. 
 
-
 ## GREEN="\033[0;32m"
 ## RESET="\033[0m"
 ## fi="${GREEN}INSTALL-INFO:${RESET}"
 
 ## Subcatergoies (Essential, Optional, ..)
+
+# ==========================================
+# INVALID/UNKNOWN PACKAGES from progs.log (not found)
+# ==========================================
+# already
+# arm
+# cargo
+# cut
+# day
+# dhcpd
+# For
+# gh-heats
+# included
+# Intel
+# Intergrated
+# ip-utils
+# maany
+# man
+# matrix-nio
+# mautrix
+# msmtf
+# nc
+# nerd-fonts
+# newer
+# of
+# packages
+# pacman-flag-option
+# pandoc
+# Propably
+# some
+# space
+# spinner
+# support
+# texlive-lang
+# texlive-most
+# these
+# tracepath
+# wifi-menu
+# wifi-tools
+# wiki-ncurses
+

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'
+$e=9
 
 ww() {
   local msg="$1"
@@ -9,16 +10,16 @@ ww() {
   clear
 }
 
-ww "(1/8) refresh pacman file databases"
+ww "(1/$e) refresh pacman file databases"
 sudo pacman -Fy
 
-ww "(2/8) update tldr pages"
+ww "(2/$e) update tldr pages"
 tldr -u
 
-ww "(3/8) clear pacman cache of unused packages (not installed)"
+ww "(3/$e) clear pacman cache of unused packages (not installed)"
 sudo pacman -Sc --noconfirm
 
-ww "(4/8) delete pacman orphans"
+ww "(4/$e) delete pacman orphans"
 orphans=$(pacman -Qdtq || true)
 if [ -n "$orphans" ]; then
     sudo pacman -R --noconfirm $orphans
@@ -27,16 +28,18 @@ else
 fi
 
 # -- -- — next step here
-ww "(5/8) select directories to delete/exclude"
+ww "(5/$e) select directories to delete/exclude"
 dirs=(~/o ~/down ~/Downloads ~/repo)
 # -- --
 
-ww "(6/8) update flatpak packages"
+ww "(6/$e) update flatpak packages"
 flatpak update -y
 
-ww "(7/8) final: pull pacman upgrade"
+ww "(7/$e) final: pull pacman upgrade"
 pull  # direkt aufrufen, ohne interaktive Shell
 
-ww "(8/8) update pkgfile"
+ww "(8/$e) update pkgfile"
 sudo pkgfile --verbose --update
 
+ww "(9/$e) update github-cli extensions"
+gh ext upgrade --all
