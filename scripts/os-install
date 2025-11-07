@@ -1,0 +1,101 @@
+#!/bin/bash
+# wifi-auto-setup planned
+
+# cpf covers visudo
+# later do something with "trap"
+# swapfile allocation is missing
+# basic error handling is missing
+
+
+# hardcoded:
+# 256G
+
+
+set -e 
+
+if [ "$#" -lt 5 ] || [ "$1" = "-h" ]; then
+	echo "give arguments! (withouth /dev/ )"
+	echo "1: efi fs"
+	echo "2: root fs"
+	echo "3: disk name"
+	echo "4: hostname"
+	echo "5: username"
+	exit
+fi
+
+loadkeys neoqwertz
+
+# ---
+clear; echo "partitions:"
+sgdisk -p /dev/$3
+echo "Enter to delete - Press C-c if you not sure"; read && sgdisk -o /dev/$3
+sgdisk -n 1:0:+512M -t 1:ef00 /dev/$3
+sgdisk -n 2:0:+256G -t 2:8300 /dev/$3
+
+mkfs.fat -F32 /dev/$1
+mkfs.ext4     /dev/$2
+
+
+echo
+echo "mounting..."
+echo
+efi="/mnt/boot/efi"
+mount /dev/$2 /mnt
+
+mkdir -p $efi;
+mount /dev/$1 $efi
+# ---
+echo "Waiting to manully setup the internet connection (press enter when done)."
+echo "Later it will be changed to automaticaly mount any"
+echo "- specific usb-stick(by label/an textfile inside it) to search through saved wifi's."
+read
+
+pacman -S reflector
+reflector -c Germany -a 6 --sort rate --save /etc/pacman.d/mirrorlist
+cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
+arch-chroot /mnt pacman -Syy
+
+echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+echo "KEYMAP=neoqwertz" > /mnt/etc/vconsole.conf
+
+# ---
+
+
+echo "put your hostname"
+echo $4 > /mnt/etc/hostname
+genfstab -U /mnt >> /mnt/etc/fstab
+
+pacstrap /mnt base linux linux-firmware efibootmgr  tmux vim vifm iwd
+arch-chroot /mnt /bin/bash << EOF
+echo "write your root password"
+passwd
+echo "write your user password"
+useradd -m -G wheel $5
+passwd $5
+
+ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+locale-gen
+
+cat << HOSTS > /etc/hosts
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   $4.localdomain   $4
+HOSTS
+
+
+mkinitcpio -P
+grub-install --efi-directory=/boot/efi --bootloader-id=GRUB
+grub-mkconfig -o /boot/grub/grub.cfg
+EOF
+
+echo "press y to reboot now";
+echo "then: reboot. pull the env repo. run */{mkdirs cpf progs mr.doctor}"
+read; if [ "$REPLY" = "y" ]; then
+	clear; echo; echo; echo; sleep 2
+	umount -R /mnt; sync; reboot
+fi
+# you have to run these in your system (not in chroot)
+# timedatectl set-ntp true
+# hwclock --systohc
+# pacman -Syy
