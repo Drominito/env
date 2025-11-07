@@ -1,4 +1,7 @@
 #!/bin/bash
+# This file can be directly downloaded with e.g:
+# wget https://raw.githubusercontent.com/Drominito/env/master/scripts/os-install -O a
+
 # wifi-auto-setup planned
 
 # cpf covers visudo
@@ -10,6 +13,11 @@
 # hardcoded:
 # 256G
 
+
+# umount -R /mnt
+# something prompts out when the partitions already have fs'
+# check if you have internet.
+# sometimes reflector dont work. (time out)
 
 set -e 
 
@@ -50,8 +58,9 @@ echo "Later it will be changed to automaticaly mount any"
 echo "- specific usb-stick(by label/an textfile inside it) to search through saved wifi's."
 read
 
-pacman -S reflector
+pacman --needed --noconfirm -S reflector
 reflector -c Germany -a 6 --sort rate --save /etc/pacman.d/mirrorlist
+mkdir -p /mnt/etc/pacman.d/
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 arch-chroot /mnt pacman -Syy
 
