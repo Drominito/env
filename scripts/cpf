@@ -3,6 +3,7 @@ red="\e[31m"
 redd="\e[0m"
 
 if [ "$(pwd)" != "$HOME/repo/env/scripts" ]; then
+	# check later, it have to be run by the user.
 	echo -e "$red env have to be in ~/repo! $redd"
 	echo -e "$red And you have to be in ~/repo/env/scripts. $redd"
     exit	
@@ -29,7 +30,7 @@ b="$HOME/.config/i3status-rust/"
 c="$HOME/.config/river/"
 d="$HOME/.config/kitty/"
 e="$HOME/.config/vifm/"
-f="$HOME/.config/swhkd/"
+f="$HOME/.config/swhkd/" # possibly useless now (river)
 g="$HOME/.config/mako/"
 h="$HOME/.config/lazygit/"
 
@@ -75,6 +76,8 @@ ln -sf 	   ../timew-auto.timer			    		$g/default.target.wants/timew-auto.timer
 ln -sf $src/scripts/systemd/user/mama-ntfy_sh.service $g/mama-ntfy_sh.service
 ln -sf ../mama-ntfy_sh.service						  $g/default.target.wants/mama-ntfy_sh.service
 
+sudo ln -sf $HOME/repo/env/dotfiles/config/r/etc/default/grub /etc/default
+sudo ln -sf $HOME/repo/env/dotfiles/config/r/etc/pacman.conf /etc/
 
 #scripts in ~
 mkdir -p $HOME/bin # this should be managed by scripts/setupDirs
