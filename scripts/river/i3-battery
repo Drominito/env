@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# somehow inxi dont work in headless.
+#type="$(inxi -M --export json --output-file print jq '.[0]["000#1#0#Machine"][0]["000#0#1#Type"]')"
+#if [[ "$type" == "\"Laptop\"" ]]; then
+
+b="$(cat /sys/class/power_supply/BAT0/capacity)"
+
+if [[ $b != '' ]]; then
+  # yes - i'll change it later…
+  #bash -ci 'upower'
+
+  info=$(upower -b | rg "time to" | cut -d' ' -f11-)
+  echo $b% - $info
+else
+	echo "nope($type);because b is |$b|" 
+fi
+
+#upower -d | rg "time" &
