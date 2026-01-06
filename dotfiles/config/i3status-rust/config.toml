@@ -10,12 +10,13 @@ command = "sleep 1 && niri msg -j focused-window | jq 'if .==null then halt elif
 hide_when_empty = true
 interval = 3
 
+
+
 [[block]]
 block = "custom"
 interval = 1
 #command = "localectl|awk 'NR==4 {print $3}'"
 command = ''' bash -c "task +ACTIVE export | jq -r '.[0] | \"\(.id) - \(.description)\" '" '''
-
 
 [[block]]
 block = "custom"
@@ -58,6 +59,9 @@ interval = 1
 
 [[block]]
 block = "sound"
+[[block.click]]
+button = "left"
+cmd = "wiremix"
 
 #[[block]]
 #block = "custom"
@@ -65,21 +69,21 @@ block = "sound"
 #command = "bash -c kitty 'curl de.wttr.in/Diepoldsau?0'"
 #command = "kitty --title Terminal1 bash -c \"curl de.wttr.in/Diepoldsau?0; exec bash\""
 
-
-
-
-# Enable it, if you device have a battery
-# later it should detect automatically, if it owns one.
-#[[block]]
-#block = "battery"
-#format = " $percentage {$time_remaining.dur(hms:true, min_unit:m) |}"
+[[block]]
+block = "custom"
+interval = 1
+command = ''' ~/repo/env/scripts/river/i3-battery '''
 
 
 [[block]]
 block = "time"
 format = " $timestamp.datetime(f:'%a %d/%m %R') "
-#interval = 60
-interval = 1
+interval = 60
+[[block.click]]
+button = "left"
+cmd = "task due"
+
+
 
 [icons]
 #icons = "material-nf"
