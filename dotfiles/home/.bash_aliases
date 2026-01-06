@@ -18,7 +18,12 @@ alias lss='clear;eza --icons $1'
 alias cd='z'
 alias cdd='zi'
 
+alias lavatt='lavat -c yellow -R1 -k red'
+
 alias cdi='cd $(fzf --walker=dir)'
+
+alias dattee='watch -n 1 date +%X'
+alias datte='termdown --time'
 
 alias gs='git status'
 
@@ -26,10 +31,15 @@ alias ki='kitten icat'
 
 alias sshc='TERM=xterm-256color ssh'
 alias s='source ~/.bashrc'
+alias ssr='systemctl soft-reboot'
 
+alias aii='asciinema p'
+alias ai='asciinema p $(wl-paste)'
 
 alias t='clear && task'
 alias ttermin='clear && task cale && task due'
+alias transs='trans en:de'
+alias ttrans='trans de:en'
 
 
 # === NO ARGS / SPECIAL TOOLS ===
@@ -42,6 +52,7 @@ alias iwctll='iwctl adapter phy0 set-property Powered on && sleep 1 && sudo dhcp
 alias c='clear'
 alias e='exit'
 alias gg='git-graph'
+alias nc='--noconfirm'
 
 
 # ah yes, these windows vibes...
@@ -61,7 +72,7 @@ alias ff='file'
 alias fgg='fg; fyi done:'
 
 # pull -> change also the ename of the tmux-window to 'pull'
-alias pull='sudo pacman --noconfirm -Syu && sleep 3 && paru -Sua && fiy "whole update done."'
+alias pull='sudo pacman --noconfirm -Syu && sleep 3 && paru -Sua --noconfirm && fyi "whole update done."'
 alias rmpac='sudo rm /var/lib/pacman/db.lck' # forgot if this is right
 
 alias git-vis='git log --all --topo-order --graph --show-signatur'
@@ -78,7 +89,7 @@ alias tvim='tmux new "vim" \; attach'
 alias python3.11='/opt/python-3.11/bin/python3.11'
 
 # list downloaded packages
-alias plog="cat /var/log/pacman.log | rg \"Running '\" | bat"
+alias plog="pkghist --no-details | bat"
 
 
 alias loremm='curl https://loremipsum.de/downloads/original.txt | wl-copy'
@@ -89,6 +100,8 @@ alias lorem='curl https://loremipsum.de/downloads/original.txt'
 alias lorem1='curl https://loremipsum.de/downloads/version1.txt'
 alias lorem2='curl https://loremipsum.de/downloads/version2.txt'
 
+alias rreset="faillock --user $USER --reset"
+
 # -- --
 alias taskmc="$HOME/repo/taskmc/taskmc/taskmc.py"
 alias vg="vanguard"
@@ -96,11 +109,14 @@ alias tmuxreload='tmux source-file ~/.tmux.conf && tmux display-message "Config 
 
 
 
-alias "cc=xclip"
-alias "vv=xclip -o"
+alias cc="xclip"
+alias vv="xclip -o"
 
 
-alias instal='paru -Sy'
+alias ts='tailscale'
+
+alias i='instal'
+alias ii='i --noconfirm'
 alias iinstal='sudo pacman -Sy'
 
 # *p*ackage-owner
@@ -109,6 +125,8 @@ alias pown='pacman -Qo'
 
 alias srpkg='paru -Ss'
 alias srpkgp='pacman -Ss'
+
+
 
 # just same letter as the first instead of 'o' for offline.
 # maybe also lsrpkg for 'local'
@@ -120,7 +138,6 @@ alias ipp="ip a | awk '/inet / && /192/ {print }' | cut -d/ -f1 | cut -c 10-"
 alias pp='curl ifconfig.me'
 
 
-alias venv='source ~/.venv/bin/activate'
 
 alias wll='tplay "$HOME/mm/img/grim/file.png"'
 
@@ -128,3 +145,10 @@ alias wll='tplay "$HOME/mm/img/grim/file.png"'
 # alias dagit="dagit_Linux_arm64" # just to know about dagit
 # alias tvim='tmux new -d && tmux send-keys -t 0 "vim" C-m && tmux attach'
 
+alias venv='source ~/.venv/bin/activate'
+alias ani39='source ~/.ani39/bin/activate'
+alias yay='paru'
+
+alias fplay='ffplay -nodisp -autoexit'
+alias song_title='mediainfo --Inform="General;%Title%"'
+alias wp='wl-copy <'
