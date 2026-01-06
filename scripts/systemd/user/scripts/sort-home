@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+HOME_DIR="$HOME"
+TARGET="$HOME/o/o"
+SYNC="$HOME/.syncFiles"
+LOCK="$HOME/.cache/sort-home.lock"
+
+mkdir -p "$SYNC" "$TARGET" "$(dirname "$LOCK")"
+
+# Lock gegen parallele Läufe
+exec 9>"$LOCK"
+flock -n 9 || exit 0
+
+# Blacklist
+blacklist_dirs=(c coding docs Downloads down fe g media mm o OneDrive repo repoC sf)
+
+is_blacklisted_dir() {
+    local n="$1"
+    for b in "${blacklist_dirs[@]}"; do
+        [[ "$n" == "$b" ]] && return 0
+    done
+    return 1
+}
+
+is_blacklisted_file() {
+    local n="$1"
+    case "$n" in
+        mancpy*) return 0 ;;
+    esac
+    return 1
+}
+
+shopt -s dotglob nullglob
+
+for item in "$HOME_DIR"/*; do
+    name="$(basename "$item")"
+
+    # Skip dotfiles
+    [[ "$name" == .* ]] && continue
+
+    # Skip symlinks
+    [[ -L "$item" ]] && continue
+
+    # Skip blacklisted dirs
+    if [[ -d "$item" ]] && is_blacklisted_dir "$name"; then
+        continue
+    fi
+
+    # Blacklist-Dateien → .syncFiles
+    if is_blacklisted_file "$name"; then
+        mv -n "$item" "$SYNC/"
+    else
+        mv -n "$item" "$TARGET/"
+    fi
+done
+
+# Symlinks von .syncFiles ins HOME, robust
+for f in "$SYNC"/*; do
+    ln -sf "$f" "$HOME/"
+done
+

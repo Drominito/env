@@ -1,0 +1,8 @@
+[Unit]
+Description=Sort files in home directory
+
+[Service]
+Type=oneshot
+ExecStart=%h/repo/env/scripts/systemd/user/scripts/sort-home
+
+

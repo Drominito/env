@@ -1,0 +1,8 @@
+[Unit]
+Description=Watch home directory for changes
+
+[Path]
+PathModified=%h
+
+[Install]
+WantedBy=default.target
