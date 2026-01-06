@@ -1,10 +1,13 @@
 # ~/.bash_fn
-
+shopt -s expand_aliases
+source ~/.bash_aliases
 
 # see what bin's the package offers
 bins() {
 	pacman -Ql "$1" | rg bin
 }
+
+
 
 tcapture() {
 delay="${1:-0}"
@@ -13,6 +16,13 @@ tmux capture-pane -pt ":$(tmux display-message -p -F '#{window_index}')" | wl-co
 }
 
 ttcapture() {
+delay="${1:-0}"
+sleep "$delay"
+tmux capture-pane -pt ":$(tmux display-message -p -F '#{window_index}')" | wl-copy
+exit
+}
+
+tcapturec() {
 delay="${1:-0}"
 sleep "$delay"
 tmux capture-pane -pt ":$(tmux display-message -p -F '#{window_index}')"
@@ -36,13 +46,21 @@ gurl() {
 ggurl() { 
     for pkg in "$@"; do
         paru -Si "$pkg" | rg '^URL' | awk -F': ' 'NR==1 {print $2}' | wl-copy
+
     done
 }
 
 
 #This is a - *B*at*H*elp! 🦇 
-bh() {
-	"$1" --help | bat
+#A fallback 'tldr'.
+tldr() {
+# wished syntax: fallback "$1" [tldr bhh]
+cmd tldr "$1" || bhh "$1"
+}
+
+# If tldr exists, but you want explicitly your ~bat
+bhh() {
+"$1" --help | bat
 }
 
 # *o*ffline searching
@@ -82,33 +100,99 @@ ssrpkgb-c() {
 	ssrpkg -q "$1" | bat
 }
 
+srpkgf() {
+tmux rename-window "pkg-$1"
+
+	mapfile -t pkgs < <(
+        srpkg-c "$1" \
+		| fzf -m \
+			--reverse \
+			--preview-window=right:80%:wrap \
+			--bind 'ctrl-a:first,ctrl-s:last' \
+			--preview  'paru -Si {}' # don't recognize pinfo(alias)
+    )
+
+    foxi "${pkgs[@]}"
+# probably replaced by *this* soon. Now not. im lazy (and it works for now!):
+alias pacs="pacman -Slq | fzf --multi --preview 'pacpreview {1}' | xargs -ro sudo pacman -S"
+# look for "https://github.com/the-daonm/gopac" too :D
+# look also at "https://github.com/eeec-cal/zz"
+}
 
 
+srpkgi() {
+tmux rename-window "install-$1"
+
+	mapfile -t pkgs < <(
+        srpkg-c "$1" \
+		| fzf -m \
+			--reverse \
+			--preview-window=right:80%:wrap \
+			--bind 'ctrl-a:first,ctrl-s:last' \
+			--preview  'paru -Si {}' # don't recognize pinfo(alias)
+    )
+
+    echo "${pkgs[@]}" 
+	echo
+    wl-copy "${pkgs[@]}" 
+    ii "${pkgs[@]}" 
+
+
+# probably replaced by *this* soon. Now not. im lazy (and it works for now!):
+alias pacs="pacman -Slq | fzf --multi --preview 'pacpreview {1}' | xargs -ro sudo pacman -S"
+# look for "https://github.com/the-daonm/gopac" too :D
+}
 
 # maybe i'll delete these later
 srcpkg-b() {
-	paru -Ss "$1"| bat
+paru -Ss "$1"| bat
 }
 # maybe i'll delete these later
 srcpkgp-b() {
-	pacman -Ss "$1"| bat
+pacman -Ss "$1"| bat
 }
 
 
 #~sicher ist sicher~
 rm() {
-  mv "$@" ~/.tr
+mv "$@" ~/.tr/
 }
 
 # - -
 
+mk_img_dir() {
+  p="$HOME/mm/img/grim"
+  file_name="sg_"
+  ext=".png"
+  
+  [[ -d "$p" ]] || { mkdir -p "$p"; fyi "creating $p [~_~]…"; }
+  
+  local i=0
+  while [[ -e "$p/$file_name$i$ext" ]]; do
+  	((i++))
+  done
+
+  r=$(zenity --entry --entry-text="$file_name$i" --text="Screenshot name:")
+  [[ $? -ne 0 || -z "$r" ]] && { fyi "nah"; return 1; }
+
+  echo "$p/$r$ext"
+}
+
 
 wl() {
-	export WAYLAND_DISPLAY=wayland-1
-	grim "$HOME/mm/img/grim/file.png"
-	fyi "shot" # already makes some sound
-	#nohup ffplay "$HOME/mm/sounds/samples/mp3/correct.mp3" &
-	nohup bash -c "sleep 5 && pkill -f -9 ffplay" &
+path="$(mk_img_dir)"
+WAYLAND_DISPLAY=wayland-1 grim - | tee "$path" | wl-copy
+fyi "\"${path##*/}\" saved…" # already makes some sound
+#nohup ffplay "$HOME/mm/sounds/samples/mp3/correct.mp3" &
+nohup bash -c "sleep 5 && pkill -f -9 ffplay" &
+}
+
+rm_grim() {
+p=(~/mm/img/grim/*)
+(( c = ${#p[@]}-1 )) || { fyi "nothing to delete"; return; }
+
+rm "${p[@]}"
+fyi "${c}x had been deleted"
 }
 
 # hmm, why does it take sooo loong??
@@ -119,13 +203,28 @@ foxi()  {
     done
 }
 
+ffoxi() 
+{ 
+    wl-paste | tr ' ' '\n' | while read -r pkg; do
+        url=$(gurl "$pkg")
+        [ -z "$url" ] && continue
+        echo "Öffne $url"
+        firefox "$url"
+    done
+}
+
+
+# **s**earch
+sfoxi() {
+	foxi $(pown -q "$1")
+}
+
 
 
 
 mkc() {
 	mkdir -p "$1" && cd "$1"
 }
-
 # <s>ea<r>ch - bat
 srpkgb() { 
 	paru -Ss "$1" | bat
@@ -141,8 +240,21 @@ xk() {
 }
 
 
-vm() {
+#vm() {
+#vim $(plocate "$1" | rg -v "undodir")
+#}
+
+# fzf vs. fd
+vi() {
   v "$(fzf -q $@)"
+}
+
+vm () {
+  vim $(fd "$@")
+}
+
+vmm() {
+  vim $(fd "$1.md" ~/mm/pesno)
 }
 
 
@@ -155,6 +267,12 @@ if [ $# -eq 0 ]; then
 	command vim
 elif [ -d "$1" ]; then
 	vifm "$1"
+elif [ "$(pwd)" = "$HOME/posi" ] || [ "$(pwd)" = "$HOME/osi" ]; then
+	if [[ "${1##*.}" == "md" ]]; then
+		command vim "$1"
+	else
+		command vim "$1.md"
+	fi
 else
 	command vim "$@"
 fi
@@ -167,7 +285,13 @@ count="${1:-1}"
 shift 2>/dev/null
 for i in $(seq 1 "$count"); do
 	"$@"
+	sleep 1
+	clear
 done
+}
+
+instal() {
+    paru -S "$@" || paru -Sy "$@"
 }
 
 mama() {
@@ -176,4 +300,45 @@ ntfy pub mama "$1"
 
 # Ich möchte direkt den Pfad eingeben, ohne explizit hinschreiben ob es text oder bin ist. (so muss ich weder <./> <.|> <bat ..> noch <v ..> eintippen.
  
+
+# network stuff
+
+arpp() {
+  arp-scan -l | fzf | cut -f1
+}
+
+
+think() {
+	cmd think bash -ic "$@"
+}
+
+anisoda() {
+aniworld -L 'German Dub' -e "$1"
+}
+
+# **emb**race
+# I use german word 'befehl', to not confuse with 'cmd'(another alias).
+
+# I dont like parallel invisible running tasks. So i prefer to open new tmux-tabs — But that will be maybe later done…
+emb() {
+  arg="$1"; shift
+
+  for befehl in "$@"; do
+	# eval is needed to expand the aliases e.g. 'i' again… (time to change to elvish)
+  	eval "$befehl" "$arg"
+  done
+  
+  # example - executes i and foxi - 'coqui-tts' is a shared argument.
+  # emb coqui-tts i foxi
+
+}
+
+speak() {
+  source ~/.venv/bin/activate
+  mimic3 "$@" --play-program "ffplay -autoexit -nodisp"
+  deactivate
+}
+
+# Future Plans:
+# — Copy a selected part of an text file - like with 'bat'
 
