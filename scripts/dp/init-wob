@@ -1,0 +1,5 @@
+#!/bin/bash
+
+mkdir -p $HOME/.local/tmp
+mkfifo $HOME/.local/tmp/wobpipe
+tail -f $HOME/.local/tmp/wobpipe | wob

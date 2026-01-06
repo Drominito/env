@@ -1,0 +1,24 @@
+#!/bin/bash
+# /home/dromi/repo/env/scripts/bl
+set -euo pipefail
+
+[[ $(id -u) -ne 0 ]] && { echo "must be run as root"; exit 1; }
+
+p=/sys/class/backlight/intel_backlight
+b="$p/brightness"
+max=$(<"$p/max_brightness")
+i=$(<"$b")
+step=$(($max/10))
+
+case "${1:-}" in
+  "+") ((i+=step)) ;;
+  "-") ((i-=step)) ;;
+  [0-9]*) ((i=$1*max/100)) ;;
+  *) exit 0 ;;
+esac
+
+((i<0))   && i=0
+((i>max)) && i=$max
+
+printf '%s\n' "$i" > "$b"
+echo "$(($i*100/$max))" # why +1???

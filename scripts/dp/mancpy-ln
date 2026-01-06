@@ -1,0 +1,1 @@
+sudo ln -s /home/dromi/repo/env/scripts/dp/bl /usr/local/bin/bl

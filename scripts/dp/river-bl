@@ -1,0 +1,13 @@
+#!/bin/bash
+
+./bl "$1"
+p="~/.local/tmp/wobpipe"
+
+case "$1" in
+	"+") ./bl + | tee "$p" ;;
+	"-") ./bl - | tee "$p" ;;
+	*) exit 0 ;;
+esac
+
+
+
