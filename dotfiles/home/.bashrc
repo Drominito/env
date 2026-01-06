@@ -14,6 +14,13 @@ fi
 
 # startup
 
+if [ -z "$WAYLAND_DISPLAY" ]; then
+	export WAYLAND_DISPLAY="wayland-1"
+fi
+
+## load api-key's
+# . ~/.k/ai
+
 
 # it have to be t-* because, ripgrep cannot distinguish the raw text
 # in pstree of 'tmux-auto.sh' as script and 'tmux' itself
@@ -25,7 +32,7 @@ bash -c "$HOME/repo/env/scripts/bash/t-mux-auto.sh"
 
 
 # other stuff
-source "/home/dromi/.config/broot/launcher/bash/br" # alternative to vifm
+# source "/home/dromi/.config/broot/launcher/bash/br" # alternative to vifm
 
 export EDITOR="vim"
 
@@ -97,6 +104,8 @@ fi
 
 
 
+
+
 #timer() {
 #termdown
 #fyi
@@ -160,3 +169,42 @@ eval "$(register-python-argcomplete pipx)"
 # Created by `pipx` on 2025-10-28 18:47:32
 export PATH="$PATH:/home/dromi/.local/bin"
 export PATH="$HOME/.cargo/bin:$PATH"
+
+
+
+
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - bash)"
+
+alias ani39="source ~/.ani39/bin/activate"
+
+
+# ---
+
+
+#export XDG_RUNTIME_DIR="$HOME/.local/run"
+#if [ ! -d "$XDG_RUNTIME_DIR" ]; then
+#    mkdir -p "$XDG_RUNTIME_DIR"
+#    chmod 700 "$XDG_RUNTIME_DIR"
+#fi
+#XDG_RUNTIME_DIR=/home/dromi/.local/run
+
+
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/usr/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/usr/etc/profile.d/conda.sh" ]; then
+        . "/usr/etc/profile.d/conda.sh"
+    else
+        export PATH="/usr/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+

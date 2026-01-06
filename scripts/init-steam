@@ -1,0 +1,4 @@
+#!/bin/bash
+sudo mount /dev/sda ~/g/steamP
+sudo chown -R dromi:dromi ~/g/steamP
+sudo chmod -R u+rwX,g+rwX,o+rX ~/g/steamP

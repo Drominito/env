@@ -27,12 +27,14 @@ mkdir -p ~/media/{pl,sandisk,schubert,b,g}
 
 
 # o-ther - when I get lazy
+# later — all files will be moved autom* to it.
 mkdir ~/o
 
 mkdir ~/.undodir
 
-# Obsidian in persoal-notes.
-ln -s ~/mm/pesno/Second-Brain ~/osi
+# Obsidian in persoal-notes (PC/phone).
+#ln -s ~/mm/pesno/Second-Brain ~/osi
+#ln -s ~/mm/pesno/a16 ~/posi
 
 # -- -- HERE IS ~/repo
 
@@ -42,8 +44,11 @@ mkdir ~/sf
 #-ash
 mkdir ~/.tr
 
+
 if [[ "$(uname -m)" -eq "x86_64" ]]; then
-    mkdir ~/steamP
+	# g for games.
+	# **steam**P-artition
+    mkdir -p ~/g/{steam,aagl,heroic} # g likely as another partition
 else
     echo "You are on $(uname -m) so have good luck to build X on your own!"
     echo "- Steam(propably not, but still hope)"

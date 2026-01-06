@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo chattr +a $HOME/mancpy*
+

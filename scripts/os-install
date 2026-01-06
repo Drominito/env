@@ -2,12 +2,20 @@
 # This file can be directly downloaded with e.g:
 # wget https://raw.githubusercontent.com/Drominito/env/master/scripts/os-install -O a
 
+ 
+# visudo should be added directly (maybe just with a ln -s that exists not temporarly)
+
 # wifi-auto-setup planned
 
 # cpf covers visudo
 # later do something with "trap"
 # swapfile allocation is missing
 # basic error handling is missing
+
+# maybe some small curses application -
+# so you can see the ToC on the right side
+# OR (simpler) -> this script writes logs, and another script will evaluate the progress
+# which will be printed in another tmux-pane
 
 
 # hardcoded:
@@ -18,6 +26,8 @@
 # something prompts out when the partitions already have fs'
 # check if you have internet.
 # sometimes reflector dont work. (time out)
+
+# passwd / useradd have not been executed
 
 set -e 
 
@@ -58,23 +68,26 @@ echo "Later it will be changed to automaticaly mount any"
 echo "- specific usb-stick(by label/an textfile inside it) to search through saved wifi's."
 read
 
-pacman --needed --noconfirm -S reflector
+pacman --needed --noconfirm -Sy reflector
 reflector -c Germany -a 6 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir -p /mnt/etc/pacman.d/
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
-arch-chroot /mnt pacman -Syy
+#arch-chroot /mnt pacman -Syy
+# when not pacstrap, i have to do this by mysel (optional) e.g. like this: mount --types proc /proc /mnt/proc
+# This information should be enough, to find more information in the arch wiki
 
+mkdir -p /mnt/etc
 echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
 echo "KEYMAP=neoqwertz" > /mnt/etc/vconsole.conf
 
 # ---
 
 
-echo "put your hostname"
 echo $4 > /mnt/etc/hostname
 genfstab -U /mnt >> /mnt/etc/fstab
 
-pacstrap /mnt base linux linux-firmware efibootmgr  tmux vim vifm iwd
+pkg=(base linux linux-firmware efibootmgr grub tmux vim vifm iwd dhcpcd git sudo)
+pacstrap /mnt "${pkg[@]}"
 arch-chroot /mnt /bin/bash << EOF
 echo "write your root password"
 passwd
@@ -108,3 +121,11 @@ fi
 # timedatectl set-ntp true
 # hwclock --systohc
 # pacman -Syy
+
+
+# Process before executing the script:
+# loadkeys neoqwertz
+# iwctl station* (if on laptop/without ethernet)
+# pacman -Sy wget
+# wget raw.gith* -O a
+# chmod +x a
