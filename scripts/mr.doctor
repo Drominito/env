@@ -1,45 +1,98 @@
 #!/usr/bin/env bash
+# ./mr.doctor
+# yes this file_name could be shorter.
+# But I still wont change it. By intetion.
+# Because this should be either run automatically or very rare by myself.
+#
+#
+# TODO:
+# - add logs, when automated with systemd.
+# - some fancy script to manage each dependencies…
+# - maybe list at the end: (duration/stats)
+# - add rules for optional deps/progs from 'progs'
+
+# used aliases: {ii pull} - see in .bash_aliases for more..
+source ~/.bash_aliases
+source ~/.bash_fn
+
 set -euo pipefail
 IFS=$'\n\t'
-$e=9
+SCRIPT_ARGS=("$@")
+s1="${SCRIPT_ARGS[0]:-}" # could just use $1 but good for clarity
 
-ww() {
-  local msg="$1"
-  echo -e "\033[1;34m$msg\033[0m"
-  sleep 1
-  clear
+
+need() {
+  command -v "$1" >/dev/null || ii "$2"
 }
+# Dependencies: sorted by installation-pain
+need lexy lexy
+need paccache pacman-contrib
+need gh github-cli
 
-ww "(1/$e) refresh pacman file databases"
-sudo pacman -Fy
+# now it needs an meta-build time xD
+# i like scripts that reads info of it self
 
-ww "(2/$e) update tldr pages"
-tldr -u
-
-ww "(3/$e) clear pacman cache of unused packages (not installed)"
-sudo pacman -Sc --noconfirm
-
-ww "(4/$e) delete pacman orphans"
-orphans=$(pacman -Qdtq || true)
-if [ -n "$orphans" ]; then
-    sudo pacman -R --noconfirm $orphans
-else
-    echo "No orphan packages to remove."
+# better than just spamming 'tee'.
+out="$HOME/.local/tmp/mrd.log"
+if [[ $s1 == "-h" ]]; then
+  script -q -f "$out" &
+  LOG_PID=$!
 fi
 
-# -- -- — next step here
-ww "(5/$e) select directories to delete/exclude"
-dirs=(~/o ~/down ~/Downloads ~/repo)
-# -- --
 
-ww "(6/$e) update flatpak packages"
-flatpak update -y
+slep() {
+  if [[ $s1 == "-h" ]]; then
+    return 1 # (maybe) useful for later
+  fi
+  sleep 1	
+}
 
-ww "(7/$e) final: pull pacman upgrade"
-pull  # direkt aufrufen, ohne interaktive Shell
+i=0
+e=$(pcre2grep '^(?=[^#\{]*ww)[^#\{]*$' "$0" | wc -l) # :'D
+ww() {
+  clear; slep
+  local msg="$1";
+  fyi "($i/$e): $msg" 
+  echo -e "\033[1;34m($i/$e): $msg\033[0m"
+  ((++i));
+  if (( (i % 3) == 0 )); then
+	sudo -n true || fyi "type your passwort in your $0 script!"
+    sudo -v
+  fi
+}
 
-ww "(8/$e) update pkgfile"
-sudo pkgfile --verbose --update
+echo "This script will often need sudo."
+echo "It'll be better when you give your passwort now."
+sudo -v
 
-ww "(9/$e) update github-cli extensions"
-gh ext upgrade --all
+
+
+# maybe only if the acutal version is older than 7days?
+# or directly when lexy is executed, it should write the exact time.
+# So i *also* can set a limit to not update it more than once a day.
+ww "update lexy pages"; ii --needed lexy; lexy update
+ww "refresh pacman file databases"; sudo pacman -Fy
+ww "update p-locate file database"; sudo updatedb -vv
+ww "update tldr pages"; tldr -u
+ww "update flatpak packages"; flatpak update -y
+ww "update pkgfile"; sudo pkgfile --verbose --update
+ww "update github-cli extensions"; gh ext upgrade --all
+ww "update pacman (pull->big)"; pull
+ww "delete vifm/Trash";
+trash="$HOME/.local/share/vifm/Trash"
+[[ -d $trash ]] && cmd rm -rf "$trash"/* # alias
+ww "clear paru cache"; paru -Scc --noconfirm
+##
+ww "clear pacman cache of unused packages (not installed)"
+sudo paccache -r;
+##
+ww "delete pacman orphans"; orphans=$(pacman -Qdtq || true)
+echo "$orphans" | xargs -r sudo pacman -R --noconfirm \
+	|| echo "No orphan packages to remove."
+
+#not ready
+#ww "select directories to delete/exclude"; dirs=(~/o ~/down ~/Downloads ~/repo)
+#not ready
+
+# UAF flashbacks…
+trap '[[ -n "${LOG_PID:-}" ]] && kill "$LOG_PID" 2>/dev/null' EXIT
