@@ -1,0 +1,3 @@
+#!/bin/bash
+
+swww img $(fd -e jpg -L . ~/media/sandisk/sandiskS/Dromi/mm/images/bg | awk 'NR=='$(($RANDOM %51))'')
