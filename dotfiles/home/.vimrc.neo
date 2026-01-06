@@ -1,0 +1,17 @@
+" It's very annoying, because i can't repeat the / search funktion with n..
+" nnoremap <C-k> :suspend<CR>
+" nnoremap s h
+" nnoremap n j
+" nnoremap r k
+" nnoremap t l
+" 
+" vnoremap s h
+" vnoremap n j
+" vnoremap r k
+" vnoremap t l
+" 
+" onoremap s h
+" onoremap n j
+" onoremap r k
+" onoremap t l
+"
