@@ -28,24 +28,17 @@
 
 bar="~/.cargo/bin/i3bar-river -c ~/.config/i3bar-river/config.toml"
 tile="rivertile -view-padding 2 -outer-padding 10 &"
-shoft="bash -ic wl" # .bash_aliases
 
 
 
 # Resolutionk2
 # --transform 90"
 
-# If I'm on the industry-pc from Eaton Automation GmbH
-wlr-randr --output eDP-1 --off
 
-# bigme-eink monitor
-main-res="wlr-randr --output HDMI-A-1 --mode 3200x1800@25.000000 --scale 2"
-riverctl spawn "wlr-randr --output HDMI-A-1 --mode 1800x3200@24.224001 --scale 2"
-#riverctl spawn "wlr-randr --output HDMI-A-1 --mode 3200x1800@25.000000 --scale 2"
-#riverctl spawn "$main-res"
+inxi -M --export json --output-file print \
+| jq '.[0]["000#1#0#Machine"][0]["001#1#1#System"]' \
+| elvish ~/repo/env/scripts/river/resolution.elv
 
-# old vertical monitor
-riverctl map normal Alt V spawn "wlr-randr --output HDMI-A-1 --transform normal --mode 3440x1440@99.982002 --scale 2"
 
 
 # Keyboardk3
@@ -64,16 +57,21 @@ riverctl keyboard-layout -variant neo_qwertz de
 #----------------------------------------------------------------------#
 
 riverctl spawn mako &
+riverctl spawn syncthing &
+riverctl spawn remind ~/.reminders -z & # termine / Routine am Tag(Stundenplan)
+riverctl spawn paf-notify &
+riverctl spawn batsignal & # more to customize
+riverctl spawn $HOME/repo/env/scripts/dp/w_dp &
 
-swww kill && sleep 1
-riverctl spawn swww-daemon
-riverctl spawn ~/repo/env/scripts/media/mk-swww &
-sleep 1 && riverctl spawn ~/repo/env/scripts/media/mk-swww
+
+# I use E-Ink man, that's not healthy.
+#swww kill && sleep 1
+#riverctl spawn swww-daemon
+#sleep 1 && riverctl spawn ~/repo/env/scripts/media/mk-swww
 
 #riverctl spawn "$bg"
 riverctl spawn kitty
 riverctl spawn "$bar"
-
 riverctl spawn "swhks & pkexec swhkd -c ~/.config/swhkd/swhkdrc"
 #riverctl swawn aw-qt # i have timew now
 
@@ -96,11 +94,11 @@ riverctl map normal Control E spawn "firefox &"
 riverctl map normal Super W spawn kitty
 riverctl map normal Alt M spawn "rofi -show drun"
 riverctl map normal Alt T spawn "rofi -show p -modi p:rofi-power-menu"
-riverctl map normal Super S spawn "$shoft" # screenshot
-riverctl map normal Super N spawn "rofi -modi emoji -show emoji"
-
+riverctl map normal Super S spawn "bash -ic wl"  # .bash_aliases
+riverctl map normal Super+Shift S spawn 'grim -g "$(slurp)" - | wl-copy'
 riverctl spawn "snixembed --fork &" # for safeeyes
 #riverctl spawn "ntfy sub mama 'fyi "$topic: $t - $m"' &" # somehow it don't work - i just add it to .bashrc
+riverctl spawn "~/repo/env/scripts/river/ntfy-i-notify"
 
 
 
@@ -119,8 +117,8 @@ riverctl spawn "snixembed --fork &" # for safeeyes
 # reload crucial stuff
 
 #riverctl map normal Alt 0 spawn "riverctl output-layout rivertile; riverctl spawn $tile; riverctl spawn $main-res"
-riverctl map normal Alt 0 spawn "riverctl output-layout rivertile" # somehow itt does not work...
 riverctl map normal Alt 0 spawn "$bar"
+riverctl map normal Alt 0 spawn "riverctl output-layout rivertile" # somehow itt does not work...
 riverctl output-layout rivertile
 riverctl spawn "$tile"
 
@@ -131,9 +129,9 @@ riverctl map normal Super I spawn "river-shifttags --shifts -1"
 riverctl map normal Super O spawn "river-shifttags --shifts +1"
 riverctl map normal Super Space toggle-float
 
-riverctl background-color 0x002b36
-riverctl border-color-focused 0x93a1a1
-riverctl border-color-unfocused 0x586e75
+riverctl background-color 0x114D85
+riverctl border-color-focused 0x0000FF
+riverctl border-color-unfocused 0xFF0000
 
 riverctl map-pointer normal Super BTN_MIDDLE toggle-float
 
@@ -172,7 +170,7 @@ riverctl map normal Super+Alt+Control J snap down
 riverctl map normal Super+Alt+Control K snap up
 riverctl map normal Super+Alt+Control L snap right
 
-riverctl map normal Super Super Q enter-mode passthrough
+riverctl map normal Super Q enter-mode passthrough
 riverctl map normal Super Return zoom
 riverctl map normal Super E toggle-fullscreen
 
@@ -190,7 +188,7 @@ riverctl map normal Super X close
 #-$----------------------Window-Stuff--------------------------------$-#
 #-$------------------------------------------------------------------$-#
 
-
+riverctl map normal Super+Control L spawn wleave
 
 
 
@@ -198,7 +196,10 @@ riverctl map normal Super X close
 #----------------------------------------------------------------------#
 #-----------------------------Soundk7----------------------------------#
 #----------------------------------------------------------------------#
-riverctl map normal Mod4+F12 spawn pulsemixer --change-volume +10
+# for Soundk7 and laptopk10(brightness)
+riverctl spawn "~/repo/env/scripts/dp/init-wob" &
+riverctl map normal Super F8 spawn "pulsemixer --change-volume -10; pulsemixer --get-volume | tee $HOME/.local/tmp/wobpipe"
+riverctl map normal Super F9 spawn "pulsemixer --change-volume +10; pulsemixer --get-volume | tee $HOME/.local/tmp/wobpipe"
 #-$------------------------------------------------------------------$-#
 #-$---------------------------Sound----------------------------------$-#
 #-$------------------------------------------------------------------$-#
@@ -257,6 +258,10 @@ riverctl map normal Super+Shift 0 set-view-tags $all_tags
 #-------------------------laptopk10-------------------------------------#
 #----------------------------------------------------------------------#
 #riverctl input pointer-2-7-SynPS/2_Synaptics_TouchPad tap enabled
+
+
+riverctl map normal Super F6 spawn "sudo /usr/local/bin/bl + | tee ~/.local/tmp/wobpipe"
+riverctl map normal Super F5 spawn "sudo /usr/local/bin/bl - | tee ~/.local/tmp/wobpipe"
 #-$--------------------------------------------------------------------$-#
 #-$-----------------------laptop---------------------------------------$-#
 #-$--------------------------------------------------------------------$-#
@@ -284,4 +289,15 @@ riverctl map normal Super+Shift 0 set-view-tags $all_tags
 # 1.2: Note: Fortunately there is no difference in order executing 'riverctl output-layout rivertile' and 'riverctl spawn "$tile"'
 
 
+riverctl input /dev/input/event2 pointer-accel 0.1
+riverctl input /dev/input/event2 accel-profile adaptive
+
+# switch fokus to other monitors(ig)
+riverctl map normal Super+Shift+Left focus-output left
+riverctl map normal Super+Shift+Right focus-output right
+
+####################
+
+# Monitor-Layout (Beamer optional)
+wlr-randr --output HDMI-A-2 --right-of eDP-1 || true
 
